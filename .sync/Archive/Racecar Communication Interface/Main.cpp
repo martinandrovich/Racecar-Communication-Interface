@@ -3,27 +3,31 @@
 //
 // Created by Martin Androvich
 
+
+#define VERSION	1.0
+
 #include "src\Console.h"
 #include "src\SerialPort.h"
 
-#define VERSION "1.0.0"
-#define COM_PORT "\\\\.\\COM4"
-
+// Init
+const char* versionNumber = "1.0.0";
 Console MainConsole;
-SerialPort MainSerialPort(COM_PORT);
 
 int main(void)
 {
 	// Init
-	printf("RCI Version %s \n", VERSION);
+	printf("RCI Version %s \n", versionNumber);
 		
 	// Config Console
 	MainConsole.SetLevel(Console::Info);
 	MainConsole.SetForceNewLine(true);
 
-	// Input
-	while(1)
-		MainConsole.Input();
+	// Print Data
+	MainConsole.Log("This is some info.", Console::Info);
+	MainConsole.Log("This is a warning.", Console::Warning);
+	MainConsole.Log("This is an error!", Console::Error);
+
+	std::cin.get();
 
 	// Exit
 	return 0;
