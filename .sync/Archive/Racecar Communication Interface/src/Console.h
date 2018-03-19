@@ -3,6 +3,7 @@
 #include <string>
 #include <Windows.h>
 
+
 class Console
 {
 public:
@@ -11,24 +12,21 @@ public:
 
 	enum LogLevel
 	{
-		Error,
-		Warning,
-		Info
+		Error = 0,
+		Warning = 1,
+		Info = 2
 	};
 
 // Methods
 public:
 	void SetLevel(LogLevel);
 	void SetForceNewLine(bool);
-
-	void Log(const char* msg, LogLevel = Info, bool _newline = false);
-	void Input();
-
-	void ExecuteCommand(std::string _command);
+	void Log(const char* msg, LogLevel = Info, bool NewLine = false);
 
 // Variables
 private:
-	LogLevel loglevel = Info;
-	bool forcenewline = false;
+	LogLevel m_LogLevel = Info;
+	bool m_ForceNewLine = false;
+
 };
 

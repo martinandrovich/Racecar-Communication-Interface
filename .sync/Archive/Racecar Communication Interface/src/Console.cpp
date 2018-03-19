@@ -1,25 +1,24 @@
 #include "Console.h"
-#include "Common.h"
 
 Console::Console()
 {
 }
 
-void Console::Log(const char* msg, LogLevel _loglevel, bool _newline)
+void Console::Log(const char* msg, LogLevel i_LogLevel, bool i_NewLine)
 {
 
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);	
 	const char* prefix = "";
 
-	switch(_loglevel)
+	switch(i_LogLevel)
 	{
 		case 0:
 			prefix = "[ERROR]: ";
-			SetConsoleTextAttribute(hConsole, (FOREGROUND_RED));
+			SetConsoleTextAttribute(hConsole, (0x0006));
 			break;
 		case 1:
 			prefix = "[WARNING]: ";
-			SetConsoleTextAttribute(hConsole, (0x0006));
+			SetConsoleTextAttribute(hConsole, (FOREGROUND_RED));
 			break;
 		case 2:
 			prefix = "";
@@ -27,65 +26,27 @@ void Console::Log(const char* msg, LogLevel _loglevel, bool _newline)
 			break;
 	}	
 
-	if (_loglevel <= this->loglevel)
+	if (i_LogLevel <= this->m_LogLevel)
 	{		
-		if (_newline  || this->forcenewline)
+		if (i_NewLine  || this->m_ForceNewLine)
 			std::cout << std::endl << prefix << msg << std::endl;
 		else
 			std::cout << prefix << msg << std::endl;
+			
 	}
-
-	SetConsoleTextAttribute(hConsole, (FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN));
+		
+	
 }
 
-void Console::Input()
+void Console::SetLevel(LogLevel i_LogLevel)
 {
-	char command[255];
-
-	std::cout << std::endl << ">> ";
-	std::cin.getline(command, sizeof(command));
-
-	ExecuteCommand(command);
-}
-
-void Console::ExecuteCommand(std::string _command)
-{
-	if (_command == "")
-		MainConsole.Log("NULL command.", Warning);
-
-	else if (_command == "exit")
-		exit(0);
-
-	else if (_command == "connect")
-		MainSerialPort.Connect();
-
-	else if (_command == "write 0")
-		MainSerialPort.WriteData(0x00);
-
-	else if (_command == "write asci5")
-		MainSerialPort.WriteData(0x35);
-
-	else if (_command == "read")
-		MainSerialPort.TempRead();
-
-	else if (_command == "read toggle")
-		return; // toggle flow reading ???
-
-	else
-		MainConsole.Log("Unrecognized command.", Warning);
-
+	this->m_LogLevel = i_LogLevel;
 }
 
 
-void Console::SetLevel(LogLevel _loglevel)
+void Console::SetForceNewLine(bool i_ForceNewLine)
 {
-	this->loglevel = _loglevel;
-}
-
-
-void Console::SetForceNewLine(bool _forcenewline)
-{
-	this->forcenewline = _forcenewline;
+	this->m_ForceNewLine = i_ForceNewLine;
 }
 
 Console::~Console()
