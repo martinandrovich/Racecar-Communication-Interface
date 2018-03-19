@@ -19,6 +19,7 @@ int main(void)
 	MainConsole.SetLevel(Console::Info);
 	MainConsole.SetForceNewLine(true);
 
+	// Just a test
 
 	// Test of stream parsing
 	MainController.ParseStream(0x35);
