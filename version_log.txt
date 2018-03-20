@@ -12,4 +12,4 @@
 - Added:	Passing by reference to improve performance (const &)
 - Added:	Command bufferstream parser
 
-- Added:	Made SerialPort an object of Controller [todo]12
+- Added:	Made SerialPort an object of Controller [todo]
