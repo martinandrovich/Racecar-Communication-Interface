@@ -34,6 +34,7 @@ public:
 	void SetArrayBuffer(std::vector<int>& _arraybuffer, void(*_eventfunction));
 
 	// Set a function to handle (parse) incoming data
+	void SetStreamHandler();
 	void SetStreamHandler(void(*_eventfunction(int)));
 
 	bool isConnected();

@@ -1,6 +1,8 @@
 #include "SerialPort.h"
 #include "Common.h"
 
+// https://www.codeproject.com/Articles/2682/Serial-Communication-in-Windows
+
 // Constructor
 SerialPort::SerialPort(const char* _COMport)
 	: connected(false), COMport(_COMport) {}
@@ -84,6 +86,11 @@ void SerialPort::Disconnect()
 	}
 }
 
+void SerialPort::SetStreamHandler()
+{
+	SetCommMask(handler, EV_TXEMPTY | EV_RXCHAR);
+}
+
 bool SerialPort::isConnected()
 {
 	return connected;
@@ -138,6 +145,8 @@ int SerialPort::ReadData()
 
 	DWORD bytesread;
 	char buffer[1];
+
+	// Try passing buffer as ref (y)
 
 	if (ReadFile(this->handler, buffer, 1, &bytesread, NULL))
 	{
