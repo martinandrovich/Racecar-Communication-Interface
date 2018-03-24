@@ -95,6 +95,9 @@ void Console::ExecuteCommand(const std::string& _command)
 	else if (_command == "readall")
 		MainSerialPort.ReadAllData();
 
+	else if (_command == "readcont")
+		MainSerialPort.ReadContinuousData();
+
 	else
 		MainConsole.Log("Unrecognized command.", Warning);
 

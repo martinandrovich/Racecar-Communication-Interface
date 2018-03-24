@@ -174,6 +174,17 @@ void SerialPort::ReadAllData()
 
 }
 
+void SerialPort::ReadContinuousData()
+{
+	int buffer = 1;
+
+	while (connected)
+		ReadAllData();
+
+	MainConsole.Log("The connection has been closed.", Console::Warning, true);
+
+}
+
 
 SerialPort::~SerialPort()
 {

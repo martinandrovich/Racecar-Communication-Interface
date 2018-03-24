@@ -28,6 +28,7 @@ public:
 
 	void WriteData(uint8_t _byte);
 	void ReadAllData();
+	void ReadContinuousData();
 	int ReadData();
 	
 	// Create an eventbased array buffer, that collects data stream and calls _eventFunction when data is added.
