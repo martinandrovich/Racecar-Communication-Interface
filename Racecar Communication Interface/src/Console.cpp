@@ -5,10 +5,23 @@ Console::Console()
 {
 }
 
+// ###################################################################################################
+// Logging
+
 void Console::InitLog()
 {
 	system("CLS");
 	printf("RCI Version %s \n", VERSION);
+}
+
+void Console::SetLevel(LogLevel _loglevel)
+{
+	this->loglevel = _loglevel;
+}
+
+void Console::SetForceNewLine(bool _forcenewline)
+{
+	this->forcenewline = _forcenewline;
 }
 
 void Console::Log(const std::string& _msg, LogLevel _loglevel, bool _newline)
@@ -53,6 +66,29 @@ void Console::Input()
 
 	ExecuteCommand(command);
 }
+
+std::string Console::OutputLastError()
+{
+	//Get the error message, if any.
+	DWORD errorMessageID = ::GetLastError();
+	if (errorMessageID == 0)
+		return std::string(); //No error message has been recorded
+
+	LPSTR messageBuffer = nullptr;
+	size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
+
+	std::string message(messageBuffer, size);
+
+	//Free the buffer.
+	LocalFree(messageBuffer);
+
+	return message;
+}
+
+
+// ###################################################################################################
+// Command Parser
 
 void Console::ExecuteCommand(const std::string& _command)
 {
@@ -122,37 +158,6 @@ void Console::ExecuteCommand(const std::string& _command)
 	else
 		MainConsole.Log("Unrecognized command.", Warning);
 
-}
-
-std::string Console::OutputLastError()
-{
-	//Get the error message, if any.
-	DWORD errorMessageID = ::GetLastError();
-	if (errorMessageID == 0)
-		return std::string(); //No error message has been recorded
-
-	LPSTR messageBuffer = nullptr;
-	size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
-
-	std::string message(messageBuffer, size);
-
-	//Free the buffer.
-	LocalFree(messageBuffer);
-
-	return message;
-}
-
-
-void Console::SetLevel(LogLevel _loglevel)
-{
-	this->loglevel = _loglevel;
-}
-
-
-void Console::SetForceNewLine(bool _forcenewline)
-{
-	this->forcenewline = _forcenewline;
 }
 
 Console::~Console()
