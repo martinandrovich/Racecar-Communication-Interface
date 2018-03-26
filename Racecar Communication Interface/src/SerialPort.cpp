@@ -139,7 +139,7 @@ int SerialPort::ReadData()
 	ClearCommError(this->handler, &this->errors, &this->status);
 
 	if (this->status.cbInQue == 0) {
-		MainConsole.Log("Empty data buffer queue.", Console::Warning, true);
+		//MainConsole.Log("Empty data buffer queue.", Console::Warning, true);
 		return 0;
 	}
 

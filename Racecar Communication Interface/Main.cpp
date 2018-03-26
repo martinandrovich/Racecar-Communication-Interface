@@ -31,6 +31,9 @@ int main(void)
 	MainController.ParseStream(0x21);
 	MainController.ParseStream(0x34);
 
+	// Connect
+	MainSerialPort.Connect();
+
 	// Input Loop
 	while(1)
 		MainConsole.Input();

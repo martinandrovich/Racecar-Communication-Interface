@@ -13,4 +13,4 @@
 - Added:	Command bufferstream parser
 
 - Added:	Made SerialPort an object of Controller [todo]
-- Added:	Added SerialPort stream listener thread [todo]
+- Added:	SerialPort stream listener thread [todo]
