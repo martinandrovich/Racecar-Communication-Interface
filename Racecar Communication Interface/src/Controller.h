@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#include "SerialPort.h"
+
 class Controller
 {
 
@@ -35,9 +37,13 @@ public:
 public:
 
 	void Connect();
+	void Disconnect();
+	bool IsConnected();
 
 	void SendCommand(TYPE _type, COMMAND _command, uint8_t _data);
 	void ParseCommand(std::vector<int>& _command);
+
+	SerialPort& GetSerialController();
 
 	void ParseStream(int _data);
 
@@ -48,8 +54,8 @@ public:
 // Variables & Data
 private:
 	
-	// Buffer for incoming commands
 	std::vector<int> command_buffer;
+	SerialPort serial_port;
 
 	int dutycycle;
 

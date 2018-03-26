@@ -13,5 +13,4 @@
 
 // Declarations
 extern Console MainConsole;
-extern SerialPort MainSerialPort;
 extern Controller MainController;

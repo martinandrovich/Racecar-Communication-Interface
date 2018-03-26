@@ -7,8 +7,9 @@
 
 class SerialPort
 {
-// Constructor & Destructor
+// Constructors & Destructor
 public:
+	SerialPort();
 	SerialPort(const char* _COMport);
 	~SerialPort();
 

@@ -3,7 +3,11 @@
 
 // https://www.codeproject.com/Articles/2682/Serial-Communication-in-Windows
 
-// Constructor
+// Constructors
+
+SerialPort::SerialPort()
+	: connected(false) {}
+
 SerialPort::SerialPort(const char* _COMport)
 	: connected(false), COMport(_COMport) {}
 

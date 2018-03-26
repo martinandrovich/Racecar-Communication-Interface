@@ -11,6 +11,6 @@
 # 1.0.2 <<
 - Added:	Passing by reference to improve performance (const &)
 - Added:	Command bufferstream parser
+- Added:	Made SerialPort an object of Controller
 
-- Added:	Made SerialPort an object of Controller [todo]
 - Added:	SerialPort stream listener thread [todo]

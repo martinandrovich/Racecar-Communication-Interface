@@ -7,7 +7,6 @@
 
 // Initialize Objects
 Console MainConsole;
-SerialPort MainSerialPort(COM_PORT);
 Controller MainController;
 
 int main(void)
@@ -30,9 +29,6 @@ int main(void)
 	MainController.ParseStream(0xAA);
 	MainController.ParseStream(0x21);
 	MainController.ParseStream(0x34);
-
-	// Connect
-	MainSerialPort.Connect();
 
 	// Input Loop
 	while(1)

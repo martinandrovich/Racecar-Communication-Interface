@@ -2,16 +2,45 @@
 #include "Common.h"
 
 
+// ###################################################################################################
+// Constructor & Destructor
+
 Controller::Controller()
 {
-	// Initialize buffer vector
+	// Initialize objects
 	this->command_buffer = std::vector<int>(3);
+	this->serial_port = SerialPort(COM_PORT);
 }
-
 
 Controller::~Controller()
 {
 }
+
+// ###################################################################################################
+// Connectivity Methods
+
+void Controller::Connect()
+{
+	serial_port.Connect();
+}
+
+void Controller::Disconnect()
+{
+	serial_port.Disconnect();
+}
+
+bool Controller::IsConnected()
+{
+	return serial_port.isConnected();
+}
+
+SerialPort& Controller::GetSerialController()
+{
+	return serial_port;
+}
+
+// ###################################################################################################
+// Communication Protocol
 
 void Controller::ParseCommand(std::vector<int>& _command)
 {

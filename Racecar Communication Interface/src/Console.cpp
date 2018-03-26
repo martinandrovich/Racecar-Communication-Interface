@@ -61,8 +61,8 @@ void Console::ExecuteCommand(const std::string& _command)
 
 	else if (_command == "exit")
 	{
-		MainSerialPort.Disconnect();
-		while (MainSerialPort.isConnected())
+		MainController.Disconnect();
+		while (MainController.IsConnected())
 			; // Wait
 		exit(0);
 	}
@@ -71,7 +71,7 @@ void Console::ExecuteCommand(const std::string& _command)
 		InitLog();
 
 	else if (_command == "connect")
-		MainSerialPort.Connect();
+		MainController.Connect();
 
 	else if (_command.find("write") != std::string::npos) {
 
@@ -82,21 +82,21 @@ void Console::ExecuteCommand(const std::string& _command)
 		// NEEDS ERROR MANAGEMENT!
 		// If tokens empty, then it crashes.
 
-		MainSerialPort.WriteData(std::stoul(tokens[1], nullptr, 0));
+		MainController.GetSerialController().WriteData(std::stoul(tokens[1], nullptr, 0));
 	}
 
 	else if (_command == "read")
 	{
-		int read_data = MainSerialPort.ReadData();
+		int read_data = MainController.GetSerialController().ReadData();
 		if (read_data)
 			printf("0x%X (%c)\n", read_data, read_data);
 	}
 
 	else if (_command == "readall")
-		MainSerialPort.ReadAllData();
+		MainController.GetSerialController().ReadAllData();
 
 	else if (_command == "readcont")
-		MainSerialPort.ReadContinuousData();
+		MainController.GetSerialController().ReadContinuousData();
 
 	else
 		MainConsole.Log("Unrecognized command.", Warning);
