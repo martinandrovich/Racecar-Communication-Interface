@@ -18,20 +18,28 @@ int main(void)
 	MainConsole.SetLevel(Console::Info);
 	MainConsole.SetForceNewLine(true);
 
-	// Just a test
+	//// Just a test
 
-	// Test of stream parsing
-	MainController.ParseStream(0x35);
-	MainController.ParseStream(0xAA);
-	MainController.ParseStream(0x21);
+	//// Test of stream parsing
+	//MainController.ParseStream(0x35);
+	//MainController.ParseStream(0xAA);
+	//MainController.ParseStream(0x21);
 
-	// Test of stream parsing 2
-	MainController.ParseStream(0xAA);
-	MainController.ParseStream(0x21);
-	MainController.ParseStream(0x34);
+	//// Test of stream parsing 2
+	//MainController.ParseStream(0xAA);
+	//MainController.ParseStream(0x21);
+	//MainController.ParseStream(0x34);
+
+	/*while(true)
+	{
+		if (GetAsyncKeyState(VK_ESCAPE))
+			break;
+
+		std::cout << "Some data.. " << std::endl;
+	}*/
 
 	// Input Loop
-	while(1)
+	while(true)
 		MainConsole.Input();
 
 	// Exit

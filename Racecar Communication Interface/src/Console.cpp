@@ -56,6 +56,16 @@ void Console::Input()
 
 void Console::ExecuteCommand(const std::string& _command)
 {
+	// Split _command by spaces into (dynamic) array
+	std::istringstream iss(_command);
+	std::vector<std::string> parsedcommand(std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>());
+
+	/*auto command_type = parsedcommand[0];
+	auto command_arg1 = parsedcommand[1];*/
+
+	// !!!
+	// Needs checking of command (input string) bounds
+
 	if (_command == "")
 		MainConsole.Log("NULL command.", Warning);
 
@@ -73,30 +83,41 @@ void Console::ExecuteCommand(const std::string& _command)
 	else if (_command == "connect")
 		MainController.Connect();
 
-	else if (_command.find("write") != std::string::npos) {
+	// Set command
+	else if (parsedcommand[0] == "set") {
 
-		std::istringstream buf(_command);
-		std::istream_iterator<std::string> beg(buf), end;
-		std::vector<std::string> tokens(beg, end);
+		// Set speed
+		if (parsedcommand[1] == "speed")
+			MainController.GetSerialController().WriteData(std::stoul(parsedcommand[2], nullptr, 0));
 
-		// NEEDS ERROR MANAGEMENT!
-		// If tokens empty, then it crashes.
-
-		MainController.GetSerialController().WriteData(std::stoul(tokens[1], nullptr, 0));
+		// Set variable1
+		if (parsedcommand[1] == "variable1")
+			MainController.GetSerialController().WriteData(std::stoul(parsedcommand[2], nullptr, 0));
 	}
 
-	else if (_command == "read")
-	{
-		int read_data = MainController.GetSerialController().ReadData();
-		if (read_data)
-			printf("0x%X (%c)\n", read_data, read_data);
-	}
+	// Read command
+	else if (parsedcommand[0] == "read") {
 
-	else if (_command == "readall")
-		MainController.GetSerialController().ReadAllData();
+		// Read latest byte
+		if (parsedcommand[1] == "last")
+		{
+			int read_data = MainController.GetSerialController().ReadData();
+			if (read_data)
+				printf("0x%X (%c)\n", read_data, read_data);
+		}
 
-	else if (_command == "readcont")
-		MainController.GetSerialController().ReadContinuousData();
+		// Read whole buffer
+		if (parsedcommand[1] == "buffer")
+		{
+			MainController.GetSerialController().ReadAllData();
+		}
+			
+		// Start polling data
+		if (parsedcommand[1] == "cont")
+		{
+			MainController.GetSerialController().ReadContinuousData();
+		}
+	}	
 
 	else
 		MainConsole.Log("Unrecognized command.", Warning);

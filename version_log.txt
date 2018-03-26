@@ -8,9 +8,12 @@
 - Added:	Controller Class
 - Fixed:	#include management
 
-# 1.0.2 <<
+# 1.0.2
 - Added:	Passing by reference to improve performance (const &)
 - Added:	Command bufferstream parser
 - Added:	Made SerialPort an object of Controller
 
-- Added:	SerialPort stream listener thread [todo]
+# 1.0.3 <<
+- Added:	Updated command parser [todo]
+- Added:	Communication protocol [todo]
+- Added:	Updated controller [todo]

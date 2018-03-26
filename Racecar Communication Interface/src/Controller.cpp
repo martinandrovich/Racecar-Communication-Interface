@@ -96,6 +96,13 @@ void Controller::ParseStream(int _data)
 
 }
 	
+// ###################################################################################################
+// Device Control
+
+void Controller::SetSpeed(const int& _speed)
+{
+	serial_port.WriteData(_speed);
+}
 
 
 //const auto& Controller::GetData(int& _variable) const

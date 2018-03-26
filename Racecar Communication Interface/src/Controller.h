@@ -49,7 +49,7 @@ public:
 
 	const auto& GetData(int& _variable) const;
 
-	void SetSpeed(int& _speed);
+	void SetSpeed(const int& _speed);
 
 // Variables & Data
 private:
@@ -58,6 +58,7 @@ private:
 	SerialPort serial_port;
 
 	int dutycycle;
+	bool polling = false;
 
 	float accl_data[3];
 	float gyro_data[3];
