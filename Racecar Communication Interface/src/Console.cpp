@@ -150,7 +150,7 @@ void Console::ExecuteCommand(const std::string& _command)
 	// Poll command
 	else if (parsedcommand[0] == "poll") {
 
-		// Poll all variables in their current state [TODO]
+		// Poll all variables in their current state
 		if (parsedcommand[1] == "all")
 			MainController.PollInformation();
 
