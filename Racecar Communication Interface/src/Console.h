@@ -25,7 +25,8 @@ public:
 	{
 		Error,
 		Warning,
-		Info
+		Info,
+		Normal
 	};
 
 // Methods
@@ -33,8 +34,8 @@ public:
 	void SetLevel(LogLevel);
 	void SetForceNewLine(bool);
 
-	void InitLog();
-	void Log(const std::string& _msg, LogLevel = Info, bool _newline = false);
+	void Init();
+	void Log(const std::string& _msg, LogLevel = Normal, bool _newline = false);
 	void Input();
 
 	std::string OutputLastError();
@@ -43,7 +44,7 @@ public:
 
 // Variables
 private:
-	LogLevel loglevel = Info;
+	LogLevel loglevel = Normal;
 	bool forcenewline = false;
 };
 

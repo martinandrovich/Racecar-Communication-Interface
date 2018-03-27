@@ -8,7 +8,7 @@ Console::Console()
 // ###################################################################################################
 // Logging
 
-void Console::InitLog()
+void Console::Init()
 {
 	system("CLS");
 	printf("RCI Version %s \n", VERSION);
@@ -32,15 +32,19 @@ void Console::Log(const std::string& _msg, LogLevel _loglevel, bool _newline)
 
 	switch(_loglevel)
 	{
-		case 0:
+		case LogLevel::Error:
 			prefix = "[ERROR]: ";
 			SetConsoleTextAttribute(hConsole, (FOREGROUND_RED));
 			break;
-		case 1:
+		case LogLevel::Warning:
 			prefix = "[WARNING]: ";
 			SetConsoleTextAttribute(hConsole, (0x0006));
 			break;
-		case 2:
+		case LogLevel::Info:
+			prefix = "[ALERT]: ";
+			SetConsoleTextAttribute(hConsole, (FOREGROUND_GREEN));
+			break;
+		case LogLevel::Normal:
 			prefix = "";
 			SetConsoleTextAttribute(hConsole, (FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN));
 			break;
@@ -114,7 +118,7 @@ void Console::ExecuteCommand(const std::string& _command)
 	}
 
 	else if (_command == "cls")
-		InitLog();
+		Init();
 
 	else if (_command == "connect")
 		MainController.Connect();
@@ -127,6 +131,30 @@ void Console::ExecuteCommand(const std::string& _command)
 			MainController.GetSerialController().WriteData(std::stoul(parsedcommand[2], nullptr, 0));
 
 		// Set variable1
+		if (parsedcommand[1] == "variable1")
+			MainController.GetSerialController().WriteData(std::stoul(parsedcommand[2], nullptr, 0));
+	}
+
+	// Get command [TODO]
+	else if (parsedcommand[0] == "get") {
+
+		// Get all variables in their current state [TODO]
+		if (parsedcommand[1] == "all")
+			MainController.PollInformation();
+
+		// Get specific variable in its current state [TODO]
+		if (parsedcommand[1] == "variable1")
+			MainController.GetSerialController().WriteData(std::stoul(parsedcommand[2], nullptr, 0));
+	}
+
+	// Poll command
+	else if (parsedcommand[0] == "poll") {
+
+		// Poll all variables in their current state [TODO]
+		if (parsedcommand[1] == "all")
+			MainController.PollInformation();
+
+		// Poll specific variable in its current state [TODO]
 		if (parsedcommand[1] == "variable1")
 			MainController.GetSerialController().WriteData(std::stoul(parsedcommand[2], nullptr, 0));
 	}

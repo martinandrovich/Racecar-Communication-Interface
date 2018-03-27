@@ -20,7 +20,7 @@ void SerialPort::Connect()
 
 	this->connected = false;
 
-	MainConsole.Log("Connecting...", Console::Info, true);
+	MainConsole.Log("Connecting...", Console::Normal, true);
 
 	// Create Handler
 	this->handler = CreateFileA(static_cast<LPCSTR>(COMport),
@@ -72,7 +72,7 @@ void SerialPort::Connect()
 				PurgeComm(this->handler, PURGE_RXCLEAR | PURGE_TXCLEAR);
 				Sleep(DEFAULT_WAIT);
 
-				MainConsole.Log("Connection established.", Console::Info, true);
+				MainConsole.Log("Connection established.", Console::Normal, true);
 			}
 		}
 	}

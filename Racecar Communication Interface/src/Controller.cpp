@@ -77,7 +77,7 @@ void Controller::ParseStream(int _data)
 	// If buffer full, output & clear
 	if (command_buffer[2] != NULL)
 	{
-		MainConsole.Log("Command recieved:", Console::Info, true);
+		MainConsole.Log("Command recieved:", Console::Normal, true);
 
 		// Could be done better with an overload for << operator
 		for (auto i : command_buffer)
@@ -98,6 +98,29 @@ void Controller::ParseStream(int _data)
 	
 // ###################################################################################################
 // Device Control
+
+void Controller::PollInformation()
+{
+	MainConsole.Log("Starting information poll; press ESC to stop.\n", Console::Info);
+	
+	this->polling = true;
+
+	int a = 0;
+	int b = 0;
+
+	while (true)
+	{
+		if (GetAsyncKeyState(VK_ESCAPE))
+			break;
+
+		a += 1;
+		b += 7;
+
+		std::cout << "\r" << "Speed: " << a << " | Distance: " << b;;
+	}
+
+	std::cout << std::endl;
+}
 
 void Controller::SetSpeed(const int& _speed)
 {

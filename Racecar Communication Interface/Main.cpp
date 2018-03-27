@@ -12,10 +12,10 @@ Controller MainController;
 int main(void)
 {
 	// Init
-	MainConsole.InitLog();
+	MainConsole.Init();
 
 	// Config Console
-	MainConsole.SetLevel(Console::Info);
+	MainConsole.SetLevel(Console::Normal);
 	MainConsole.SetForceNewLine(true);
 
 	//// Just a test
@@ -29,14 +29,6 @@ int main(void)
 	//MainController.ParseStream(0xAA);
 	//MainController.ParseStream(0x21);
 	//MainController.ParseStream(0x34);
-
-	/*while(true)
-	{
-		if (GetAsyncKeyState(VK_ESCAPE))
-			break;
-
-		std::cout << "Some data.. " << std::endl;
-	}*/
 
 	// Input Loop
 	while(true)

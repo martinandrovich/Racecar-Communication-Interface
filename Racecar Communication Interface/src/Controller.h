@@ -47,9 +47,10 @@ public:
 
 	void ParseStream(int _data);
 
-	const auto& GetData(int& _variable) const;
-
 	void SetSpeed(const int& _speed);
+
+	void PollInformation();
+	void PollVariable();
 
 // Variables & Data
 private:
