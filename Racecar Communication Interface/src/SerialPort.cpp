@@ -180,12 +180,17 @@ void SerialPort::ReadAllData()
 
 void SerialPort::ReadContinuousData()
 {
-	int buffer = 1;
+	
+	MainConsole.Log("Starting continuous buffer reading; press ESC to stop.\n", Console::Info);
+	Sleep(2000);
 
-	while (connected)
+	while (true)
+	{
+		if (GetAsyncKeyState(VK_ESCAPE))
+			break;
+
 		ReadAllData();
-
-	MainConsole.Log("The connection has been closed.", Console::Warning, true);
+	}
 
 }
 

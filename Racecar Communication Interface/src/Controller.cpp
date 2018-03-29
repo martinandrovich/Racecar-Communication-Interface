@@ -101,7 +101,7 @@ void Controller::ParseStream(int _data)
 
 void Controller::PollInformation()
 {
-	MainConsole.Log("Starting information poll; press ESC to stop.\n", Console::Info);
+	MainConsole.Log("Starting data polling; press ESC to stop.\n", Console::Info);
 
 	Sleep(2000);
 	

@@ -6,7 +6,7 @@
 #include "Controller.h"
 
 // Definitions
-#define VERSION "1.0.2"
+#define VERSION "1.0.3"
 #define COM_PORT "\\\\.\\COM3"
 #define DATA_LENGTH 1
 #define DEFAULT_WAIT 2000
