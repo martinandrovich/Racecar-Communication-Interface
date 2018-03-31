@@ -182,7 +182,7 @@ void SerialPort::ReadContinuousData()
 {
 	
 	MainConsole.Log("Starting continuous buffer reading; press ESC to stop.\n", Console::Info);
-	Sleep(2000);
+	//Sleep(2000);
 
 	while (true)
 	{
