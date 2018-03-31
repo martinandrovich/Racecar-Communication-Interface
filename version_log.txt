@@ -16,4 +16,5 @@
 # 1.0.3 <<
 - Added:	Updated command parser [todo]
 - Added:	Communication protocol [todo]
+- Added:	COM port listener [todo]
 - Added:	Updated controller [todo]

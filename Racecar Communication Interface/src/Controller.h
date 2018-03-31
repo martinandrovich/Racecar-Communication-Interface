@@ -50,7 +50,7 @@ public:
 	void SetSpeed(const int& _speed);
 
 	void PollInformation();
-	void PollVariable();
+	void PollVariable(COMMAND _variable);
 
 // Variables & Data
 private:

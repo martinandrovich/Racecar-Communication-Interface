@@ -123,6 +123,26 @@ void Console::ExecuteCommand(const std::string& _command)
 	else if (_command == "connect")
 		MainController.Connect();
 
+	else if (_command == "test")
+	{
+		MainController.GetSerialController().WriteData(0x35);
+		MainController.GetSerialController().WriteData(0x32);
+		MainController.GetSerialController().WriteData(0x20);
+	}
+
+	else if (_command == "test2")
+	{
+		MainController.GetSerialController().WriteData(0x39);
+		MainController.GetSerialController().WriteData(0x32);
+		MainController.GetSerialController().WriteData(0x20);
+	}
+
+	else if (_command == "struct")
+	{
+		MainController.GetSerialController().SomeFunction();
+	}
+		
+
 	// Set command
 	else if (parsedcommand[0] == "set") {
 

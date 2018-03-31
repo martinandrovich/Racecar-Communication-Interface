@@ -1,9 +1,13 @@
 #include "SerialPort.h"
 #include "Common.h"
 
+
+// ###################################################################################################
+// Serial Port
+
 // https://www.codeproject.com/Articles/2682/Serial-Communication-in-Windows
 
-// Constructors
+// Constructors & Destructor
 
 SerialPort::SerialPort()
 	: connected(false) {}
@@ -11,6 +15,10 @@ SerialPort::SerialPort()
 SerialPort::SerialPort(const char* _COMport)
 	: connected(false), COMport(_COMport) {}
 
+SerialPort::~SerialPort()
+{
+	this->Disconnect();
+}
 
 // Create HANDLE and connect to specified COMport
 void SerialPort::Connect()
@@ -150,7 +158,7 @@ int SerialPort::ReadData()
 	DWORD bytesread;
 	char buffer[1];
 
-	// Try passing buffer as ref (y)
+	// !!! Try passing buffer as ref instead of value (&)
 
 	if (ReadFile(this->handler, buffer, 1, &bytesread, NULL))
 	{
@@ -194,8 +202,26 @@ void SerialPort::ReadContinuousData()
 
 }
 
-
-SerialPort::~SerialPort()
+void SerialPort::SomeFunction()
 {
-	this->Disconnect();
+	std::cout << Listener::a << std::endl;
+	std::cout << listener.listening << std::endl;
+	listener.ret();
+	Listener::ret();
+
+}
+
+// ###################################################################################################
+// Listener
+
+// Constructor & Destructor
+SerialPort::Listener::Listener() {}
+
+SerialPort::Listener::~Listener() {}
+
+
+
+void SerialPort::Listener::ret()
+{
+	std::cout << "Test\n";
 }
