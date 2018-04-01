@@ -9,7 +9,7 @@ Controller::Controller()
 {
 	// Initialize objects
 	this->command_buffer = std::vector<int>(3);
-	this->serial_port = SerialPort(COM_PORT);
+	//this->serial_port = SerialPort(COM_PORT);
 }
 
 Controller::~Controller()
@@ -95,6 +95,11 @@ void Controller::ParseStream(int _data)
 	}
 
 }
+
+void Controller::ListenRaw(bool _autoparse)
+{
+	;
+}
 	
 // ###################################################################################################
 // Device Control
@@ -126,11 +131,5 @@ void Controller::PollData(COMMAND _var)
 
 void Controller::SetSpeed(const int& _speed)
 {
-	serial_port.WriteData(_speed);
+	serial_port.WriteByte(_speed);
 }
-
-
-//const auto& Controller::GetData(int& _variable) const
-//{
-//	return this->velocity;
-//}

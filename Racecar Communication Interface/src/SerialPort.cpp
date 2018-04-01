@@ -10,7 +10,7 @@
 // Constructors & Destructor
 
 SerialPort::SerialPort()
-	: connected(false) {}
+	: connected(false), COMport(COM_PORT) {}
 
 SerialPort::SerialPort(const char* _COMport)
 	: connected(false), COMport(_COMport) {}
@@ -18,6 +18,8 @@ SerialPort::SerialPort(const char* _COMport)
 SerialPort::~SerialPort()
 {
 	this->Disconnect();
+	listener->join();
+	delete listener;
 }
 
 // Create HANDLE and connect to specified COMport
@@ -78,7 +80,7 @@ void SerialPort::Connect()
 				this->connected = true;
 
 				PurgeComm(this->handler, PURGE_RXCLEAR | PURGE_TXCLEAR);
-				Sleep(DEFAULT_WAIT);
+				Sleep(TIMEOUT);
 
 				MainConsole.Log("Connection established.", Console::Normal, true);
 			}
@@ -94,13 +96,10 @@ void SerialPort::Disconnect()
 		MainConsole.Log("Closing connection...");
 
 		this->connected = false;
+		this->listening = false;
+
 		CloseHandle(this->handler);
 	}
-}
-
-void SerialPort::SetStreamHandler()
-{
-	SetCommMask(handler, EV_TXEMPTY | EV_RXCHAR);
 }
 
 bool SerialPort::isConnected()
@@ -108,7 +107,7 @@ bool SerialPort::isConnected()
 	return connected;
 }
 
-void SerialPort::WriteData(uint8_t _byte)
+void SerialPort::WriteByte(uint8_t _byte)
 {
 	
 	DWORD transmittedBytes;
@@ -122,7 +121,7 @@ void SerialPort::WriteData(uint8_t _byte)
 
 	MainConsole.Log("Attempting to write data...");
 
-	if (!WriteFile(this->handler, bytes, DATA_LENGTH, &transmittedBytes, NULL))
+	if (!WriteFile(this->handler, bytes, 1, &transmittedBytes, NULL))
 	{
 		MainConsole.Log("Data could not be written.", Console::Error, true);
 		MainConsole.OutputLastError();
@@ -136,7 +135,7 @@ void SerialPort::WriteData(uint8_t _byte)
 	return;
 }
 
-int SerialPort::ReadData()
+int SerialPort::ReadByte()
 {
 
 	// Check connection
@@ -179,7 +178,7 @@ void SerialPort::ReadAllData()
 
 	while (buffer)
 	{
-		buffer = ReadData();
+		buffer = ReadByte();
 		if (buffer)
 			printf("0x%X (%c)\n", buffer, buffer);
 	}
@@ -202,26 +201,41 @@ void SerialPort::ReadContinuousData()
 
 }
 
-void SerialPort::SomeFunction()
+void SerialPort::Listener()
 {
-	std::cout << Listener::a << std::endl;
-	std::cout << listener.listening << std::endl;
-	listener.ret();
-	Listener::ret();
+	auto thID = std::this_thread::get_id();
 
+	std::cout << "Listener thread created." << std::endl;
+	using namespace std::literals::chrono_literals;
+
+	while (listening)
+	{
+
+		ClearCommError(this->handler, &this->errors, &this->status);
+
+		if (this->status.cbInQue >= data_length)
+		{
+			MainConsole.Log("Telegram recieved:\n", Console::Info);
+			ReadAllData();
+			std::cout << std::endl << ">> ";
+		}
+
+		std::this_thread::sleep_for(50ms);
+	}
 }
 
-// ###################################################################################################
-// Listener
-
-// Constructor & Destructor
-SerialPort::Listener::Listener() {}
-
-SerialPort::Listener::~Listener() {}
-
-
-
-void SerialPort::Listener::ret()
+void SerialPort::Listen(int _length, int _refresh)
 {
-	std::cout << "Test\n";
+	if (listener != nullptr)
+	{
+		MainConsole.Log("A listener thread already exists.", Console::Warning);
+		return;
+	}
+	
+	MainConsole.Log("Initializing listener, type \"listener pause\" to toggle pause.", Console::Info);
+
+	Sleep(2000);
+
+	this->listening = true;
+	listener = new std::thread(&SerialPort::Listener, this);
 }

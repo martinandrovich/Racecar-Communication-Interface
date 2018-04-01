@@ -45,7 +45,7 @@ public:
 	SerialPort& GetSerialController();
 
 	void SendTelegram(TYPE _type, COMMAND _command, uint8_t& _data);
-	void ParseTelegram(uint8_t& _telegram);
+	void ParseTelegram(uint8_t _telegram[]);
 
 	void ParseCommand(std::vector<int>& _command);
 	void ParseStream(int _data);

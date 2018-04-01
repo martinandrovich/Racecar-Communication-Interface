@@ -5,40 +5,24 @@
 #include <string>
 #include <vector>
 #include <thread>
+#include <chrono>
 
 class SerialPort
 {
+// Default Values
+
+#define COM_PORT		"\\\\.\\COM5"
+#define	TIMEOUT			2000
+#define BUFFER_LENGTH	1
+#define	DATA_LENGTH		4
+#define	REFRESH_RATE	50
+
 // Constructors & Destructor
-public:
+public:	
 
 	SerialPort();
 	SerialPort(const char* _COMport);
 	~SerialPort();
-
-// Structures
-private:
-
-	struct Listener {
-
-		Listener();
-		~Listener();
-
-		static const int a = 5;
-
-		static const int refresh_rate = 50;
-		bool listening = false;
-
-		static void ret();
-
-		void Listen();
-		void Poll();
-		void Stop();
-		void SetHandler(void(*_eventfunction));
-
-		bool isListening();
-
-
-	};
 
 // Handles & Variables
 private:
@@ -47,10 +31,16 @@ private:
 	COMSTAT	status;
 	DWORD	errors;
 
-	Listener listener;
+	const char* COMport = COM_PORT;
+	bool connected = false;
 
-	bool connected;
-	const char* COMport;
+	std::thread* listener;
+
+	bool polling = false;
+	bool listening = false;
+	int  timeout = TIMEOUT;
+	int  refresh_rate = REFRESH_RATE;
+	int  data_length = DATA_LENGTH;
 
 // Methods
 public:
@@ -58,25 +48,17 @@ public:
 	void Connect();
 	void Disconnect();
 
-	void SomeFunction();
-
-	void WriteData(uint8_t _byte);
-	int  ReadData();
-	//int  ReadData(int _length = 1);
+	void WriteByte(uint8_t _byte);
+	int  ReadByte();
+	void Poll(int _length, int _timeout);
+	void Listen(int _length, int _refresh);
+	void Listener();
 	void ClearBuffer();
 
 	void ReadAllData();
 	void ReadContinuousData();
 	
-
 	int  getQueue();
-	
-	// Create an eventbased array buffer, that collects data stream and calls _eventFunction when data is added.
-	void SetArrayBuffer(std::vector<int>& _arraybuffer, void(*_eventfunction));
-
-	// Set a function to handle (parse) incoming data
-	void SetStreamHandler();
-	void SetStreamHandler(void(*_eventfunction(int)));
 
 	bool isConnected();
 	

@@ -123,36 +123,40 @@ void Console::ExecuteCommand(const std::string& _command)
 	else if (_command == "connect")
 		MainController.Connect();
 
+	else if (_command == "listener")
+		MainController.GetSerialController().Listen(4, 50);
+
 	else if (_command == "test")
 	{
-		MainController.GetSerialController().WriteData(0x35);
-		MainController.GetSerialController().WriteData(0x32);
-		MainController.GetSerialController().WriteData(0x20);
+		MainController.GetSerialController().WriteByte(0x35);
+		MainController.GetSerialController().WriteByte(0x32);
+		MainController.GetSerialController().WriteByte(0x20);
 	}
 
 	else if (_command == "test2")
 	{
-		MainController.GetSerialController().WriteData(0x39);
-		MainController.GetSerialController().WriteData(0x32);
-		MainController.GetSerialController().WriteData(0x20);
-	}
+		MainController.GetSerialController().WriteByte(0x39);
+		MainController.GetSerialController().WriteByte(0x32);
+		MainController.GetSerialController().WriteByte(0x20);
+	}		
 
-	else if (_command == "struct")
+	else if (_command == "echo")
 	{
-		MainController.GetSerialController().SomeFunction();
+		MainController.GetSerialController().WriteByte(0x35);
+		MainController.GetSerialController().WriteByte(0x35);
+		MainController.GetSerialController().WriteByte(0x20);
 	}
-		
 
 	// Set command
 	else if (parsedcommand[0] == "set") {
 
 		// Set speed
 		if (parsedcommand[1] == "speed")
-			MainController.GetSerialController().WriteData(std::stoul(parsedcommand[2], nullptr, 0));
+			MainController.GetSerialController().WriteByte(std::stoul(parsedcommand[2], nullptr, 0));
 
 		// Set variable1
 		if (parsedcommand[1] == "variable1")
-			MainController.GetSerialController().WriteData(std::stoul(parsedcommand[2], nullptr, 0));
+			MainController.GetSerialController().WriteByte(std::stoul(parsedcommand[2], nullptr, 0));
 	}
 
 	// Get command [TODO]
@@ -164,7 +168,23 @@ void Console::ExecuteCommand(const std::string& _command)
 
 		// Get specific variable in its current state [TODO]
 		if (parsedcommand[1] == "variable1")
-			MainController.GetSerialController().WriteData(std::stoul(parsedcommand[2], nullptr, 0));
+			MainController.GetSerialController().WriteByte(std::stoul(parsedcommand[2], nullptr, 0));
+	}
+
+	// Listen command [TODO]
+	else if (parsedcommand[0] == "listen") {
+
+		// Listen for all variables in their current state [TODO]
+		if (parsedcommand[1] == "all")
+			MainController.PollData();
+
+		// Listen for any bytes (unparsed) [TODO]
+		if (parsedcommand[1] == "raw")
+			MainController.PollData();
+
+		// Listen for a specific variable in its current state [TODO]
+		if (parsedcommand[1] == "variable1")
+			MainController.GetSerialController().WriteByte(std::stoul(parsedcommand[2], nullptr, 0));
 	}
 
 	// Poll command
@@ -176,7 +196,7 @@ void Console::ExecuteCommand(const std::string& _command)
 
 		// Poll specific variable in its current state [TODO]
 		if (parsedcommand[1] == "variable1")
-			MainController.GetSerialController().WriteData(std::stoul(parsedcommand[2], nullptr, 0));
+			MainController.GetSerialController().WriteByte(std::stoul(parsedcommand[2], nullptr, 0));
 	}
 
 	// Read command
@@ -185,7 +205,7 @@ void Console::ExecuteCommand(const std::string& _command)
 		// Read latest byte
 		if (parsedcommand[1] == "last")
 		{
-			int read_data = MainController.GetSerialController().ReadData();
+			int read_data = MainController.GetSerialController().ReadByte();
 			if (read_data)
 				printf("0x%X (%c)\n", read_data, read_data);
 		}
