@@ -42,7 +42,7 @@ SerialPort& Controller::GetSerialController()
 // ###################################################################################################
 // Communication Protocol
 
-void Controller::SendTelegram(TYPE _type, COMMAND _command, uint8_t& _data)
+void Controller::SendTelegram(TYPE _type, COMMAND _command, uint8_t _data)
 {
 	MainConsole.Log("Sending telegram.", Console::Normal);
 
@@ -51,14 +51,19 @@ void Controller::SendTelegram(TYPE _type, COMMAND _command, uint8_t& _data)
 	serial_port.WriteByte(_data);
 }
 
-void Controller::ParseTelegram(const uint8_t * _telegram, int _length)
+void Controller::ParseTelegram(const uint8_t * _telegram)
 {
 	if (_telegram[0] != TYPE::REPLY)
 	{
 		MainConsole.Log("Recieved telegram is of incompatible TYPE.", Console::Error);
-		// ClearBuffer();
+		serial_port.Flush();
 		return;
 	}
+
+	// DATA:
+	uint16_t data = (_telegram[2] << 8) | _telegram[3];
+
+	printf("Recieved variable 0x%X with data 0x%X\n", _telegram[1], data);
 
 	switch (_telegram[1])
 	{
@@ -71,18 +76,6 @@ void Controller::ParseTelegram(const uint8_t * _telegram, int _length)
 		default:
 			return;
 	}
-
-	// DATA:
-	// uint16_t value = (highByte << 8) | lowByte;
-
-	// IF ERROR:
-	// ClearBuffer();
-
-}
-
-void Controller::ListenRaw(bool _autoparse)
-{
-	;
 }
 	
 // ###################################################################################################

@@ -196,6 +196,12 @@ void SerialPort::ReadBuffer(uint8_t& _buffer, int _length)
 	}
 }
 
+void SerialPort::Flush()
+{
+	PurgeComm(handler, PURGE_TXABORT | PURGE_RXABORT | PURGE_TXCLEAR | PURGE_RXCLEAR);
+	MainConsole.Log("Buffer was flushed.", Console::Normal);
+}
+
 void SerialPort::ReadAllData()
 {	
 	int buffer = 1;
@@ -225,12 +231,41 @@ void SerialPort::ReadContinuousData()
 
 }
 
+void SerialPort::Poll(int _length, int _timeout)
+{
+	;
+}
+
+
+void SerialPort::Listen(int _length, int _refresh)
+{
+	if (listener != nullptr)
+	{
+		MainConsole.Log("A listener thread allready exists.", Console::Warning);
+		return;
+	}
+
+	MainConsole.Log("Initializing listener, type \"listener pause\" to toggle pause.", Console::Info);
+
+	// Clear buffer
+	this->Flush();
+
+	// Change settings
+
+	Sleep(500);
+
+	// Start listening
+
+	this->listening = true;
+	listener = new std::thread(&SerialPort::Listener, this);
+}
+
 void SerialPort::Listener()
 {
 	using namespace std::literals::chrono_literals;
 	auto threadID = std::this_thread::get_id();
 
-	std::cout << "Listener thread created.";
+	std::cout << "Listener thread created.\n";
 
 	while (listening)
 	{
@@ -241,6 +276,7 @@ void SerialPort::Listener()
 
 			uint8_t buffer[255];
 
+			std::cout << std::endl;
 			MainConsole.Log("Telegram recieved.", Console::Info);
 
 			ReadBuffer(*buffer, data_length);
@@ -252,25 +288,4 @@ void SerialPort::Listener()
 
 		std::this_thread::sleep_for(50ms);
 	}
-}
-
-void SerialPort::Listen(int _length, int _refresh)
-{
-	if (listener != nullptr)
-	{
-		MainConsole.Log("A listener thread allready exists.", Console::Warning);
-		return;
-	}
-	
-	MainConsole.Log("Initializing listener, type \"listener pause\" to toggle pause.", Console::Info);
-
-	// Clear buffer
-	// Change settings
-
-	Sleep(500);
-
-	// Start listening
-
-	this->listening = true;
-	listener = new std::thread(&SerialPort::Listener, this);
 }

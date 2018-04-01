@@ -147,6 +147,26 @@ void Console::ExecuteCommand(const std::string& _command)
 		MainController.GetSerialController().WriteByte(0x20);
 	}
 
+	// Test commands
+	else if (parsedcommand[0] == "test") {
+
+		// Test #1 (SET 0x00_01 -> LED_OFF)
+		if (parsedcommand[1] == "ledoff")
+			MainController.SendTelegram(Controller::SET, Controller::DATA1, 0);
+
+		// Test #2 (SET 0x00_02 -> LED_ON)
+		if (parsedcommand[1] == "ledon")
+			MainController.SendTelegram(Controller::SET, Controller::DATA2, 0);
+
+		// Test #3 (SET 0x00_03 -> SET_LED)
+		if (parsedcommand[1] == "setled")
+			MainController.SendTelegram(Controller::SET, Controller::DATA3, std::stoul(parsedcommand[2], nullptr, 0));
+
+		// Test Echo (SET 0x00_12 -> SET_ECHO)
+		if (parsedcommand[1] == "echo")
+			MainController.SendTelegram(Controller::SET, Controller::VAR1, 0);
+	}
+
 	// Set command
 	else if (parsedcommand[0] == "set") {
 
@@ -187,7 +207,8 @@ void Console::ExecuteCommand(const std::string& _command)
 			MainController.GetSerialController().WriteByte(std::stoul(parsedcommand[2], nullptr, 0));
 	}
 
-	// Poll command
+	// Poll command [DEPRECATED]
+	// Should be changed to PULL
 	else if (parsedcommand[0] == "poll") {
 
 		// Poll all variables in their current state
@@ -199,7 +220,7 @@ void Console::ExecuteCommand(const std::string& _command)
 			MainController.GetSerialController().WriteByte(std::stoul(parsedcommand[2], nullptr, 0));
 	}
 
-	// Read command
+	// Read command [DEPRECATED]
 	else if (parsedcommand[0] == "read") {
 
 		// Read latest byte

@@ -47,6 +47,7 @@ public:
 
 	void Connect();
 	void Disconnect();
+	void Flush();
 
 	void WriteByte(uint8_t _byte);
 	char ReadByte();
@@ -55,13 +56,10 @@ public:
 	void Poll(int _length, int _timeout);
 	void Listen(int _length, int _refresh);
 
-	void Listener();
-	void ClearBuffer();
+	void Listener();	
 
 	void ReadAllData();
 	void ReadContinuousData();
-	
-	int  getQueue();
 
 	bool isConnected();
 	
