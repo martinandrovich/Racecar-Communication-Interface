@@ -49,9 +49,12 @@ public:
 	void Disconnect();
 
 	void WriteByte(uint8_t _byte);
-	int  ReadByte();
+	char ReadByte();
+	void ReadBuffer(uint8_t& _buffer, int _length);
+
 	void Poll(int _length, int _timeout);
 	void Listen(int _length, int _refresh);
+
 	void Listener();
 	void ClearBuffer();
 

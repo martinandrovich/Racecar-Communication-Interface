@@ -45,18 +45,14 @@ public:
 	SerialPort& GetSerialController();
 
 	void SendTelegram(TYPE _type, COMMAND _command, uint8_t& _data);
-	void ParseTelegram(uint8_t _telegram[]);
-
-	void ParseCommand(std::vector<int>& _command);
-	void ParseStream(int _data);
+	void ParseTelegram(const uint8_t * _telegram, int _length = 4);
 	
-	// !!! Get & Listen -> default ALL, else specify (maybe array?)
 	void Set(COMMAND _var);
 	int  Get(COMMAND _var = ALL, int _timeout = 2000);
 	void Listen(void(*_callback), COMMAND _var = ALL, int _refresh = 50);
 	void ListenRaw(bool _autoparse = false);
 
-	// Device Control (Functions)
+	// Device Control (Methods)
 	void SetSpeed(const int& _speed);
 
 	void PollData(COMMAND _var = ALL);

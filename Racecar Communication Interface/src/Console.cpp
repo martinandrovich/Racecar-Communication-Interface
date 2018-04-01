@@ -41,7 +41,7 @@ void Console::Log(const std::string& _msg, LogLevel _loglevel, bool _newline)
 			SetConsoleTextAttribute(hConsole, (0x0006));
 			break;
 		case LogLevel::Info:
-			prefix = "[ALERT]: ";
+			//prefix = "[ALERT]: ";
 			SetConsoleTextAttribute(hConsole, (FOREGROUND_GREEN));
 			break;
 		case LogLevel::Normal:

@@ -80,9 +80,9 @@ void SerialPort::Connect()
 				this->connected = true;
 
 				PurgeComm(this->handler, PURGE_RXCLEAR | PURGE_TXCLEAR);
-				Sleep(TIMEOUT);
+				Sleep(500);
 
-				MainConsole.Log("Connection established.", Console::Normal, true);
+				MainConsole.Log("Connection established.", Console::Info, true);
 			}
 		}
 	}
@@ -135,7 +135,7 @@ void SerialPort::WriteByte(uint8_t _byte)
 	return;
 }
 
-int SerialPort::ReadByte()
+char SerialPort::ReadByte()
 {
 
 	// Check connection
@@ -146,18 +146,15 @@ int SerialPort::ReadByte()
 	}
 
 	// Check queue
-
 	ClearCommError(this->handler, &this->errors, &this->status);
 
 	if (this->status.cbInQue == 0) {
-		//MainConsole.Log("Empty data buffer queue.", Console::Warning, true);
+		MainConsole.Log("Empty data buffer queue.", Console::Warning, true);
 		return 0;
 	}
 
 	DWORD bytesread;
-	char buffer[1];
-
-	// !!! Try passing buffer as ref instead of value (&)
+	uint8_t buffer[1];
 
 	if (ReadFile(this->handler, buffer, 1, &bytesread, NULL))
 	{
@@ -170,6 +167,33 @@ int SerialPort::ReadByte()
 		return 0;
 	}
 	
+}
+
+void SerialPort::ReadBuffer(uint8_t& _buffer, int _length)
+{
+	// Check connection
+	if (!isConnected())
+	{
+		MainConsole.Log("No active connection.", Console::Error, true);
+		return;
+	}
+
+	// Check queue
+	ClearCommError(this->handler, &this->errors, &this->status);
+
+	if (this->status.cbInQue == 0) {
+		MainConsole.Log("Empty data buffer queue.", Console::Warning, true);
+		return;
+	}
+
+	DWORD bytesread;
+
+	if (!ReadFile(this->handler, &_buffer, _length, &bytesread, NULL))
+	{
+		MainConsole.Log("Error occured reading data.", Console::Error, true);
+		MainConsole.OutputLastError();
+		return;
+	}
 }
 
 void SerialPort::ReadAllData()
@@ -203,20 +227,26 @@ void SerialPort::ReadContinuousData()
 
 void SerialPort::Listener()
 {
-	auto thID = std::this_thread::get_id();
-
-	std::cout << "Listener thread created." << std::endl;
 	using namespace std::literals::chrono_literals;
+	auto threadID = std::this_thread::get_id();
+
+	std::cout << "Listener thread created.";
 
 	while (listening)
 	{
-
 		ClearCommError(this->handler, &this->errors, &this->status);
 
-		if (this->status.cbInQue >= data_length)
+		if (status.cbInQue >= data_length)
 		{
-			MainConsole.Log("Telegram recieved:\n", Console::Info);
-			ReadAllData();
+
+			uint8_t buffer[255];
+
+			MainConsole.Log("Telegram recieved.", Console::Info);
+
+			ReadBuffer(*buffer, data_length);
+			buffer[data_length] = '\0';
+			MainController.ParseTelegram(buffer); // CALLBACK
+
 			std::cout << std::endl << ">> ";
 		}
 
@@ -228,13 +258,18 @@ void SerialPort::Listen(int _length, int _refresh)
 {
 	if (listener != nullptr)
 	{
-		MainConsole.Log("A listener thread already exists.", Console::Warning);
+		MainConsole.Log("A listener thread allready exists.", Console::Warning);
 		return;
 	}
 	
 	MainConsole.Log("Initializing listener, type \"listener pause\" to toggle pause.", Console::Info);
 
-	Sleep(2000);
+	// Clear buffer
+	// Change settings
+
+	Sleep(500);
+
+	// Start listening
 
 	this->listening = true;
 	listener = new std::thread(&SerialPort::Listener, this);

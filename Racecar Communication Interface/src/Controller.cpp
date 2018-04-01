@@ -42,13 +42,25 @@ SerialPort& Controller::GetSerialController()
 // ###################################################################################################
 // Communication Protocol
 
-void Controller::ParseCommand(std::vector<int>& _command)
+void Controller::SendTelegram(TYPE _type, COMMAND _command, uint8_t& _data)
 {
+	MainConsole.Log("Sending telegram.", Console::Normal);
 
-	if (_command[0] != TYPE::REPLY)
+	serial_port.WriteByte(_type);
+	serial_port.WriteByte(_command);
+	serial_port.WriteByte(_data);
+}
+
+void Controller::ParseTelegram(const uint8_t * _telegram, int _length)
+{
+	if (_telegram[0] != TYPE::REPLY)
+	{
+		MainConsole.Log("Recieved telegram is of incompatible TYPE.", Console::Error);
+		// ClearBuffer();
 		return;
+	}
 
-	switch (_command[1])
+	switch (_telegram[1])
 	{
 		case COMMAND::DATA1:
 			break;
@@ -60,39 +72,11 @@ void Controller::ParseCommand(std::vector<int>& _command)
 			return;
 	}
 
-}
+	// DATA:
+	// uint16_t value = (highByte << 8) | lowByte;
 
-void Controller::ParseStream(int _data)
-{
-	// Load data into buffer
-	for (int i = 0; command_buffer.size() > i; i++)
-	{
-		if (command_buffer[i] == NULL)
-		{
-			command_buffer[i] = _data;
-			break;
-		}
-	}
-
-	// If buffer full, output & clear
-	if (command_buffer[2] != NULL)
-	{
-		MainConsole.Log("Command recieved:", Console::Normal, true);
-
-		// Could be done better with an overload for << operator
-		for (auto i : command_buffer)
-			printf("0x%X (%c) ", i, i);
-			//std::cout << i << ' ';
-
-		std::cout << std::endl;
-
-		//// CALL Execute command
-
-		// Fill vector with NULL
-		std::fill(command_buffer.begin(), command_buffer.end(), NULL);
-
-		return;
-	}
+	// IF ERROR:
+	// ClearBuffer();
 
 }
 
