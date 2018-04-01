@@ -160,7 +160,7 @@ void Console::ExecuteCommand(const std::string& _command)
 
 		// Get all variables in their current state [TODO]
 		if (parsedcommand[1] == "all")
-			MainController.PollInformation();
+			MainController.PollData();
 
 		// Get specific variable in its current state [TODO]
 		if (parsedcommand[1] == "variable1")
@@ -172,7 +172,7 @@ void Console::ExecuteCommand(const std::string& _command)
 
 		// Poll all variables in their current state
 		if (parsedcommand[1] == "all")
-			MainController.PollInformation();
+			MainController.PollData();
 
 		// Poll specific variable in its current state [TODO]
 		if (parsedcommand[1] == "variable1")

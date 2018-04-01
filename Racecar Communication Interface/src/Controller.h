@@ -26,6 +26,7 @@ public:
 
 	enum COMMAND
 	{
+		ALL		= 0x00,
 		START	= 0x10,
 		STOP	= 0x11,
 		DATA1	= 0x01,
@@ -36,21 +37,29 @@ public:
 // Methods
 public:
 
+	// Communication
 	void Connect();
 	void Disconnect();
 	bool IsConnected();
 
-	void SendCommand(TYPE _type, COMMAND _command, uint8_t _data);
-	void ParseCommand(std::vector<int>& _command);
-
 	SerialPort& GetSerialController();
 
-	void ParseStream(int _data);
+	void SendTelegram(TYPE _type, COMMAND _command, uint8_t& _data);
+	void ParseTelegram(uint8_t& _telegram);
 
+	void ParseCommand(std::vector<int>& _command);
+	void ParseStream(int _data);
+	
+	// !!! Get & Listen -> default ALL, else specify (maybe array?)
+	void Set(COMMAND _var);
+	int  Get(COMMAND _var = ALL, int _timeout = 2000);
+	void Listen(void(*_callback), COMMAND _var = ALL, int _refresh = 50);
+	void ListenRaw(bool _autoparse = false);
+
+	// Device Control (Functions)
 	void SetSpeed(const int& _speed);
 
-	void PollInformation();
-	void PollVariable(COMMAND _variable);
+	void PollData(COMMAND _var = ALL);
 
 // Variables & Data
 private:
@@ -58,8 +67,9 @@ private:
 	std::vector<int> command_buffer;
 	SerialPort serial_port;
 
-	int dutycycle;
+	int  dutycycle;
 	bool polling = false;
+	bool listening = false;
 
 	float accl_data[3];
 	float gyro_data[3];

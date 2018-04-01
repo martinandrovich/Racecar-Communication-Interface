@@ -99,7 +99,7 @@ void Controller::ParseStream(int _data)
 // ###################################################################################################
 // Device Control
 
-void Controller::PollInformation()
+void Controller::PollData(COMMAND _var)
 {
 	MainConsole.Log("Starting data polling; press ESC to stop.\n", Console::Info);
 

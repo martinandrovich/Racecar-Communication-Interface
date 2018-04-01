@@ -31,6 +31,7 @@ private:
 		static void ret();
 
 		void Listen();
+		void Poll();
 		void Stop();
 		void SetHandler(void(*_eventfunction));
 
@@ -42,9 +43,9 @@ private:
 // Handles & Variables
 private:
 
-	HANDLE handler;
-	COMSTAT status;
-	DWORD errors;
+	HANDLE	handler;
+	COMSTAT	status;
+	DWORD	errors;
 
 	Listener listener;
 
@@ -60,9 +61,15 @@ public:
 	void SomeFunction();
 
 	void WriteData(uint8_t _byte);
+	int  ReadData();
+	//int  ReadData(int _length = 1);
+	void ClearBuffer();
+
 	void ReadAllData();
 	void ReadContinuousData();
-	int ReadData();
+	
+
+	int  getQueue();
 	
 	// Create an eventbased array buffer, that collects data stream and calls _eventFunction when data is added.
 	void SetArrayBuffer(std::vector<int>& _arraybuffer, void(*_eventfunction));
