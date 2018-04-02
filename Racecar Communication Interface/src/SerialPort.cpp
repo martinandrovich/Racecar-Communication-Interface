@@ -119,18 +119,12 @@ void SerialPort::WriteByte(uint8_t _byte)
 		return;
 	}
 
-	MainConsole.Log("Attempting to write data...");
-
 	if (!WriteFile(this->handler, bytes, 1, &transmittedBytes, NULL))
 	{
 		MainConsole.Log("Data could not be written.", Console::Error, true);
 		MainConsole.OutputLastError();
 		ClearCommError(this->handler, &this->errors, &this->status);
 	}
-	else
-	{
-		MainConsole.Log("Data sent.");
-	}	
 	
 	return;
 }
@@ -231,9 +225,18 @@ void SerialPort::ReadContinuousData()
 
 }
 
-void SerialPort::Poll(int _length, int _timeout)
+// ###################################################################################################
+// Poller & Listener
+
+bool SerialPort::Poll(int _length)
 {
-	;
+	
+	ClearCommError(this->handler, &this->errors, &this->status);
+	
+	if (status.cbInQue >= _length)
+		return true;
+	else
+		return false;
 }
 
 
@@ -274,14 +277,19 @@ void SerialPort::Listener()
 		if (status.cbInQue >= data_length)
 		{
 
-			uint8_t buffer[255];
+			uint8_t buffer[BUFFER_MAX_LENGTH];
 
 			std::cout << std::endl;
 			MainConsole.Log("Telegram recieved.", Console::Info);
 
+			// Read buffer
 			ReadBuffer(*buffer, data_length);
 			buffer[data_length] = '\0';
-			MainController.ParseTelegram(buffer); // CALLBACK
+
+			// Check CRITERIA if set
+
+			// Send to CALLBACK
+			MainController.ParseTelegram(buffer);
 
 			std::cout << std::endl << ">> ";
 		}

@@ -10,11 +10,12 @@
 
 # 1.0.2
 - Added:	Passing by reference to improve performance (const &)
-- Added:	Command bufferstream parser
 - Added:	Made SerialPort an object of Controller
 
-# 1.0.3 <<
-- Added:	Updated command parser [todo]
-- Added:	Communication protocol [todo]
-- Added:	COM port listener [todo]
-- Added:	Updated controller [todo]
+# 1.0.3 
+- Added:	Communication Protocol (alpha)
+- Added:	COM Listener
+
+# 1.0.4 <<
+- Added:	Defaults headerfile
+-

@@ -7,17 +7,11 @@
 #include <thread>
 #include <chrono>
 
+#include "Defaults.h"
+
 class SerialPort
 {
-// Default Values
-
-#define COM_PORT		"\\\\.\\COM5"
-#define	TIMEOUT			2000
-#define BUFFER_LENGTH	1
-#define	DATA_LENGTH		4
-#define	REFRESH_RATE	50
-
-// Constructors & Destructor
+	// Constructors & Destructor
 public:	
 
 	SerialPort();
@@ -51,9 +45,9 @@ public:
 
 	void WriteByte(uint8_t _byte);
 	char ReadByte();
-	void ReadBuffer(uint8_t& _buffer, int _length);
+	void ReadBuffer(uint8_t& _buffer, int _length = DATA_LENGTH);
 
-	void Poll(int _length, int _timeout);
+	bool Poll(int _length = DATA_LENGTH);
 	void Listen(int _length, int _refresh);
 
 	void Listener();	

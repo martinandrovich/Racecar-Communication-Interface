@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "Defaults.h"
+
 class Console
 {
 // Constructor & Destructor

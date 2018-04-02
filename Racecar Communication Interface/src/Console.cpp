@@ -123,48 +123,53 @@ void Console::ExecuteCommand(const std::string& _command)
 	else if (_command == "connect")
 		MainController.Connect();
 
+	else if (!MainController.IsConnected())
+		MainConsole.Log("Cannot execute command without COM connection.", Warning);
+
 	else if (_command == "listener")
 		MainController.GetSerialController().Listen(4, 50);
-
-	else if (_command == "test")
-	{
-		MainController.GetSerialController().WriteByte(0x35);
-		MainController.GetSerialController().WriteByte(0x32);
-		MainController.GetSerialController().WriteByte(0x20);
-	}
-
-	else if (_command == "test2")
-	{
-		MainController.GetSerialController().WriteByte(0x39);
-		MainController.GetSerialController().WriteByte(0x32);
-		MainController.GetSerialController().WriteByte(0x20);
-	}		
-
-	else if (_command == "echo")
-	{
-		MainController.GetSerialController().WriteByte(0x35);
-		MainController.GetSerialController().WriteByte(0x35);
-		MainController.GetSerialController().WriteByte(0x20);
-	}
 
 	// Test commands
 	else if (parsedcommand[0] == "test") {
 
 		// Test #1 (SET 0x00_01 -> LED_OFF)
 		if (parsedcommand[1] == "ledoff")
-			MainController.SendTelegram(Controller::SET, Controller::DATA1, 0);
+			MainController.Set(Controller::DATA1);
+			//MainController.SendTelegram(Controller::SET, Controller::DATA1, 0);
 
 		// Test #2 (SET 0x00_02 -> LED_ON)
 		if (parsedcommand[1] == "ledon")
-			MainController.SendTelegram(Controller::SET, Controller::DATA2, 0);
+			MainController.Set(Controller::DATA2);
+			//MainController.SendTelegram(Controller::SET, Controller::DATA2);
 
-		// Test #3 (SET 0x00_03 -> SET_LED)
+		// Test #3A (SET 0x00_03 -> SET_LED)
 		if (parsedcommand[1] == "setled")
-			MainController.SendTelegram(Controller::SET, Controller::DATA3, std::stoul(parsedcommand[2], nullptr, 0));
+			MainController.Set(Controller::DATA3, std::stoul(parsedcommand[2], nullptr, 0));
+			//MainController.SendTelegram(Controller::SET, Controller::DATA3, std::stoul(parsedcommand[2], nullptr, 0));
 
-		// Test Echo (SET 0x00_12 -> SET_ECHO)
+		// Test #3B (SET 0x00_03 -> SET_LED) w/ Verification
+		if (parsedcommand[1] == "setledver")
+		{
+			int  setval = std::stoul(parsedcommand[2], nullptr, 0);
+			bool result = MainController.Set(Controller::DATA3, setval, true);
+
+			if (result)
+				printf("\n[DATA: 0x%X] was sent!\n", setval);
+			else
+				printf("\nData verification failed.");
+		}			
+
+		// Test #4 (SET 0x00_12 -> DO_ECHO)
 		if (parsedcommand[1] == "echo")
-			MainController.SendTelegram(Controller::SET, Controller::VAR1, 0);
+			MainController.SendTelegram(Controller::SET, Controller::VAR1);
+
+		// Test #5 (GET 0x00_12 -> SEND_TEST_TELEGRAM)
+		if (parsedcommand[1] == "gettele")
+			printf("Recieved [DATA: 0x%X] \n", MainController.Get(Controller::VAR1));
+
+		// Test #6 (GET 0x00_03 -> GET_LED)
+		if (parsedcommand[1] == "getled")
+			printf("Recieved [DATA: 0x%X] \n", MainController.Get(Controller::DATA3));
 	}
 
 	// Set command
@@ -208,7 +213,7 @@ void Console::ExecuteCommand(const std::string& _command)
 	}
 
 	// Poll command [DEPRECATED]
-	// Should be changed to PULL
+	// Should be changed to >>> PULL <<<
 	else if (parsedcommand[0] == "poll") {
 
 		// Poll all variables in their current state

@@ -2,8 +2,12 @@
 
 #include <string>
 #include <vector>
+#include <chrono>
 
 #include "SerialPort.h"
+#include "Defaults.h"
+
+using Clock = std::chrono::high_resolution_clock;
 
 class Controller
 {
@@ -45,12 +49,12 @@ public:
 
 	SerialPort& GetSerialController();
 
-	void SendTelegram(TYPE _type, COMMAND _command, uint8_t _data);
+	void SendTelegram(TYPE _type, COMMAND _command, uint8_t _data = 0);
 	void ParseTelegram(const uint8_t * _telegram);
 	
-	void Set(COMMAND _var, int _value);
-	int  Get(COMMAND _var, int _timeout = 2000);
-	void Listen(void(*_callback), COMMAND _var = ALL, int _refresh = 50);
+	bool Set(COMMAND _var, int _value = 0, bool _verify = false);
+	int  Get(COMMAND _var, int _timeout = TIMEOUT);
+	void Listen(void(*_callback), COMMAND _var = ALL, int _refresh = REFRESH_RATE);
 	void ListenRaw(bool _autoparse = false);
 
 	// Device Control (Methods)
@@ -62,14 +66,10 @@ public:
 // Variables & Data
 private:
 	
-	std::vector<int> command_buffer;
 	SerialPort serial_port;
 
-	int  dutycycle;
 	bool polling = false;
 	bool listening = false;
 
-	float accl_data[3];
-	float gyro_data[3];
 };
 

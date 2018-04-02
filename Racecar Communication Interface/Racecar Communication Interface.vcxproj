@@ -139,6 +139,7 @@
     <ClInclude Include="src\Controller.h" />
     <ClInclude Include="src\Common.h" />
     <ClInclude Include="src\Console.h" />
+    <ClInclude Include="src\Defaults.h" />
     <ClInclude Include="src\SerialPort.h" />
   </ItemGroup>
   <ItemGroup>

@@ -4,6 +4,7 @@
 // Created by Martin Androvich
 
 #include "src\Common.h"
+#include "src\Defaults.h"
 
 // Initialize Objects
 Console MainConsole;

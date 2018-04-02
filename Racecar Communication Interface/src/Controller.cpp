@@ -5,16 +5,9 @@
 // ###################################################################################################
 // Constructor & Destructor
 
-Controller::Controller()
-{
-	// Initialize objects
-	this->command_buffer = std::vector<int>(3);
-	//this->serial_port = SerialPort(COM_PORT);
-}
+Controller::Controller() {}
 
-Controller::~Controller()
-{
-}
+Controller::~Controller() {}
 
 // ###################################################################################################
 // Connectivity Methods
@@ -44,7 +37,9 @@ SerialPort& Controller::GetSerialController()
 
 void Controller::SendTelegram(TYPE _type, COMMAND _command, uint8_t _data)
 {
-	MainConsole.Log("Sending telegram.", Console::Normal);
+	MainConsole.Log("Sending telegram.", Console::Normal, false);
+
+	// !!! Show contents of sent telegram? i.e. Sending telegram: [0xAA | 0x11 | 0x00].
 
 	serial_port.WriteByte(_type);
 	serial_port.WriteByte(_command);
@@ -56,14 +51,14 @@ void Controller::ParseTelegram(const uint8_t * _telegram)
 	if (_telegram[0] != TYPE::REPLY)
 	{
 		MainConsole.Log("Recieved telegram is of incompatible TYPE.", Console::Error);
-		serial_port.Flush();
+		//serial_port.Flush();
 		return;
 	}
 
 	// DATA:
 	uint16_t data = (_telegram[2] << 8) | _telegram[3];
 
-	printf("Recieved variable 0x%X with data 0x%X\n", _telegram[1], data);
+	printf("Recieved [TYPE: 0x%X] with [COMMAND: 0x%X] and [DATA: 0x%X]\n", _telegram[0], _telegram[1], data);
 
 	switch (_telegram[1])
 	{
@@ -76,6 +71,73 @@ void Controller::ParseTelegram(const uint8_t * _telegram)
 		default:
 			return;
 	}
+}
+
+bool Controller::Set(COMMAND _var, int _value, bool _verify)
+{
+	// Send SET telegram
+	SendTelegram(Controller::SET, _var, _value);
+
+	// Verify
+	if (_verify && _value != 0)
+	{
+		Sleep(PAUSE);
+		std::cout << "Verifying data..." << std::endl;
+
+		if (_value == Get(_var))
+			return true;
+		else
+			return false;
+	}
+	else
+		return true;
+}
+
+int Controller::Get(COMMAND _var, int _timeout)
+{
+
+	// !!! NEEDS LISTENER MANAGEMENT / ERRROR HANDLING! :(
+
+	// Send GET telegram
+	SendTelegram(Controller::GET, _var);
+
+	// Setup poll
+	polling = true;
+	uint8_t buffer[BUFFER_MAX_LENGTH];
+
+	auto time_started = Clock::now();
+	auto time_current = Clock::now();
+	auto time_delta   = std::chrono::duration_cast<std::chrono::milliseconds>(time_current - time_started).count();	
+
+	// Start polling
+	while (polling)
+	{
+		// Check timeout
+		time_current = Clock::now();
+		time_delta   = std::chrono::duration_cast<std::chrono::milliseconds>(time_current - time_started).count();
+
+		if (time_delta == _timeout)
+			polling = false;		
+
+		// Check buffer
+		if (serial_port.Poll())
+		{
+
+			serial_port.ReadBuffer(*buffer);
+
+			if (buffer[0] == TYPE::REPLY && buffer[1] == _var)
+			{
+				polling = false;
+				uint16_t data = (buffer[2] << 8) | buffer[3];
+				return data;
+			}
+		}		
+
+	}
+
+	MainConsole.Log("Could not GET; Poll timed out.", Console::Error);
+	serial_port.Flush();
+	return 0;
 }
 	
 // ###################################################################################################
