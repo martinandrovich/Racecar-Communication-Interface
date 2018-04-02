@@ -240,7 +240,7 @@ bool SerialPort::Poll(int _length)
 }
 
 
-void SerialPort::Listen(int _length, int _refresh)
+void SerialPort::Listen(int _length, int _refresh, void(*_callback))
 {
 	if (listener != nullptr)
 	{

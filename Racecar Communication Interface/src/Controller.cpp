@@ -139,6 +139,15 @@ int Controller::Get(COMMAND _var, int _timeout)
 	serial_port.Flush();
 	return 0;
 }
+
+void Controller::Listen(COMMAND _var, int _refresh)
+{
+	;
+
+	// Cases for _var
+
+	// Init Listener
+}
 	
 // ###################################################################################################
 // Device Control

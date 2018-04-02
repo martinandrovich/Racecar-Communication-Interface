@@ -54,7 +54,7 @@ public:
 	
 	bool Set(COMMAND _var, int _value = 0, bool _verify = false);
 	int  Get(COMMAND _var, int _timeout = TIMEOUT);
-	void Listen(void(*_callback), COMMAND _var = ALL, int _refresh = REFRESH_RATE);
+	void Listen(COMMAND _var = ALL, int _refresh = REFRESH_RATE);
 	void ListenRaw(bool _autoparse = false);
 
 	// Device Control (Methods)

@@ -18,4 +18,4 @@
 
 # 1.0.4 <<
 - Added:	Defaults headerfile
--
+- Updated:	Naming conventions (lowerCamelCase, private_ suffix etc.) [todo]

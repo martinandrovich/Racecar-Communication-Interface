@@ -48,7 +48,7 @@ public:
 	void ReadBuffer(uint8_t& _buffer, int _length = DATA_LENGTH);
 
 	bool Poll(int _length = DATA_LENGTH);
-	void Listen(int _length, int _refresh);
+	void Listen(int _length, int _refresh, void(*_callback) = nullptr);
 
 	void Listener();	
 
