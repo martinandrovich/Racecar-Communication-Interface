@@ -48,18 +48,24 @@ void Controller::SendTelegram(TYPE _type, COMMAND _command, uint8_t _data)
 
 void Controller::ParseTelegram(const uint8_t * _telegram)
 {
+	// Check TYPE to be REPLY
 	if (_telegram[0] != TYPE::REPLY)
 	{
 		MainConsole.Log("Recieved telegram is of incompatible TYPE.", Console::Error);
-		//serial_port.Flush();
+		serial_port.Flush();
 		return;
 	}
 
-	// DATA:
+	// If looking for specific COMMAND and not found, then return.
+	if (specifier != ALL && _telegram[1] != specifier)
+		return;
+
+	// Assemble Data:
 	uint16_t data = (_telegram[2] << 8) | _telegram[3];
 
 	printf("Recieved [TYPE: 0x%X] with [COMMAND: 0x%X] and [DATA: 0x%X]\n", _telegram[0], _telegram[1], data);
 
+	// Select appropriate function
 	switch (_telegram[1])
 	{
 		case COMMAND::DATA1:
@@ -71,6 +77,9 @@ void Controller::ParseTelegram(const uint8_t * _telegram)
 		default:
 			return;
 	}
+
+	// Reset listener specifier
+	specifier == Controller::ALL;
 }
 
 bool Controller::Set(COMMAND _var, int _value, bool _verify)
@@ -142,11 +151,8 @@ int Controller::Get(COMMAND _var, int _timeout)
 
 void Controller::Listen(COMMAND _var, int _refresh)
 {
-	;
-
-	// Cases for _var
-
-	// Init Listener
+	specifier = _var;
+	serial_port.Listen();
 }
 	
 // ###################################################################################################

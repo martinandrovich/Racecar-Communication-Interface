@@ -143,7 +143,7 @@ char SerialPort::ReadByte()
 	ClearCommError(this->handler, &this->errors, &this->status);
 
 	if (this->status.cbInQue == 0) {
-		MainConsole.Log("Empty data buffer queue.", Console::Warning, true);
+		//MainConsole.Log("Empty data buffer queue.", Console::Warning, true);
 		return 0;
 	}
 
@@ -176,7 +176,7 @@ void SerialPort::ReadBuffer(uint8_t& _buffer, int _length)
 	ClearCommError(this->handler, &this->errors, &this->status);
 
 	if (this->status.cbInQue == 0) {
-		MainConsole.Log("Empty data buffer queue.", Console::Warning, true);
+		//MainConsole.Log("Empty data buffer queue.", Console::Warning, true);
 		return;
 	}
 
@@ -240,27 +240,32 @@ bool SerialPort::Poll(int _length)
 }
 
 
-void SerialPort::Listen(int _length, int _refresh, void(*_callback))
+void SerialPort::Listen(int _length, int _refresh)
 {
-	if (listener != nullptr)
-	{
-		MainConsole.Log("A listener thread allready exists.", Console::Warning);
-		return;
-	}
-
+	
 	MainConsole.Log("Initializing listener, type \"listener pause\" to toggle pause.", Console::Info);
+	
+	// Pause listener if running
+	if (listening)
+		listening = false;
 
 	// Clear buffer
-	this->Flush();
+	Flush();
 
-	// Change settings
+	// Set settings
+	Sleep(PAUSE);
 
-	Sleep(500);
+	refresh_rate = _refresh;
+	data_length = _length;
 
 	// Start listening
 
 	this->listening = true;
-	listener = new std::thread(&SerialPort::Listener, this);
+
+	// Initialize Listener thread
+	if (listener == nullptr)
+		listener = new std::thread(&SerialPort::Listener, this);
+	
 }
 
 void SerialPort::Listener()

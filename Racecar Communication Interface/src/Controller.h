@@ -71,5 +71,7 @@ private:
 	bool polling = false;
 	bool listening = false;
 
+	COMMAND specifier = ALL;
+
 };
 

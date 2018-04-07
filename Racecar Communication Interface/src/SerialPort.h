@@ -35,6 +35,7 @@ private:
 	int  timeout = TIMEOUT;
 	int  refresh_rate = REFRESH_RATE;
 	int  data_length = DATA_LENGTH;
+	int* callback_func = nullptr;
 
 // Methods
 public:
@@ -48,7 +49,7 @@ public:
 	void ReadBuffer(uint8_t& _buffer, int _length = DATA_LENGTH);
 
 	bool Poll(int _length = DATA_LENGTH);
-	void Listen(int _length, int _refresh, void(*_callback) = nullptr);
+	void Listen(int _length = DATA_LENGTH, int _refresh = REFRESH_RATE);
 
 	void Listener();	
 

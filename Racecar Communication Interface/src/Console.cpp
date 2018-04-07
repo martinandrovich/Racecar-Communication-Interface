@@ -127,7 +127,7 @@ void Console::ExecuteCommand(const std::string& _command)
 		MainConsole.Log("Cannot execute command without COM connection.", Warning);
 
 	else if (_command == "listener")
-		MainController.GetSerialController().Listen(4, 50);
+		MainController.Listen();
 
 	// Test commands
 	else if (parsedcommand[0] == "test") {
