@@ -18,4 +18,5 @@
 
 # 1.0.4 <<
 - Added:	Defaults headerfile
-- Updated:	Naming conventions (lowerCamelCase, private_ suffix etc.) [todo]
+- Added:	Communication Protocol (beta)
+- Updated:	Naming conventions (lowerCamelCase, _private suffix etc.) [todo]

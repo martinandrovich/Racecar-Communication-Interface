@@ -38,6 +38,7 @@ public:
 
 	void Init();
 	void Log(const std::string& _msg, LogLevel = Normal, bool _newline = false);
+	void In();
 	void Input();
 
 	std::string OutputLastError();

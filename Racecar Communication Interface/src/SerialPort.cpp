@@ -143,7 +143,7 @@ char SerialPort::ReadByte()
 	ClearCommError(this->handler, &this->errors, &this->status);
 
 	if (this->status.cbInQue == 0) {
-		//MainConsole.Log("Empty data buffer queue.", Console::Warning, true);
+		MainConsole.Log("Empty data buffer queue.", Console::Warning, true);
 		return 0;
 	}
 
@@ -176,7 +176,7 @@ void SerialPort::ReadBuffer(uint8_t& _buffer, int _length)
 	ClearCommError(this->handler, &this->errors, &this->status);
 
 	if (this->status.cbInQue == 0) {
-		//MainConsole.Log("Empty data buffer queue.", Console::Warning, true);
+		MainConsole.Log("Empty data buffer queue.", Console::Warning, true);
 		return;
 	}
 
@@ -243,7 +243,7 @@ bool SerialPort::Poll(int _length)
 void SerialPort::Listen(int _length, int _refresh)
 {
 	
-	MainConsole.Log("Initializing listener, type \"listener pause\" to toggle pause.", Console::Info);
+	MainConsole.Log("Initializing listener, type \"listener stop\" to stop.", Console::Info);
 	
 	// Pause listener if running
 	if (listening)
@@ -253,16 +253,13 @@ void SerialPort::Listen(int _length, int _refresh)
 	Flush();
 
 	// Set settings
-	Sleep(PAUSE);
-
 	refresh_rate = _refresh;
 	data_length = _length;
 
 	// Start listening
-
 	this->listening = true;
 
-	// Initialize Listener thread
+	// Initialize Listener thread if needed
 	if (listener == nullptr)
 		listener = new std::thread(&SerialPort::Listener, this);
 	
@@ -277,26 +274,26 @@ void SerialPort::Listener()
 
 	while (listening)
 	{
-		ClearCommError(this->handler, &this->errors, &this->status);
-
-		if (status.cbInQue >= data_length)
+		if (this->Poll(data_length))
 		{
 
 			uint8_t buffer[BUFFER_MAX_LENGTH];
-
-			std::cout << std::endl;
-			MainConsole.Log("Telegram recieved.", Console::Info);
 
 			// Read buffer
 			ReadBuffer(*buffer, data_length);
 			buffer[data_length] = '\0';
 
-			// Check CRITERIA if set
+			// Handle recieved data
+			if (data_length == 1)
+			{
+				printf("BYTE: 0x%X\n", buffer[0]);
+				std::cout << std::endl << ">> ";
+			}
+			else
+			{
+				MainController.ParseTelegram(buffer);	
+			}
 
-			// Send to CALLBACK
-			MainController.ParseTelegram(buffer);
-
-			std::cout << std::endl << ">> ";
 		}
 
 		std::this_thread::sleep_for(50ms);

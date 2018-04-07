@@ -61,11 +61,16 @@ void Console::Log(const std::string& _msg, LogLevel _loglevel, bool _newline)
 	SetConsoleTextAttribute(hConsole, (FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN));
 }
 
+void Console::In()
+{
+	std::cout << std::endl << ">> ";
+}
+
 void Console::Input()
 {
 	std::string command;
 
-	std::cout << std::endl << ">> ";
+	In();
 	std::getline(std::cin, command);
 
 	ExecuteCommand(command);
@@ -96,6 +101,7 @@ std::string Console::OutputLastError()
 
 void Console::ExecuteCommand(const std::string& _command)
 {
+	
 	// Split _command by spaces into (dynamic) array
 	std::istringstream iss(_command);
 	std::vector<std::string> parsedcommand(std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>());
@@ -126,10 +132,7 @@ void Console::ExecuteCommand(const std::string& _command)
 	else if (!MainController.IsConnected())
 		MainConsole.Log("Cannot execute command without COM connection.", Warning);
 
-	else if (_command == "listener")
-		MainController.Listen();
-
-	// Test commands
+	// Test commands for MIC board
 	else if (parsedcommand[0] == "test") {
 
 		// Test #1 (SET 0x00_01 -> LED_OFF)
@@ -172,7 +175,7 @@ void Console::ExecuteCommand(const std::string& _command)
 			printf("Recieved [DATA: 0x%X] \n", MainController.Get(Controller::DATA3));
 	}
 
-	// Set command
+	// Set command [UPDATE NEEDED]
 	else if (parsedcommand[0] == "set") {
 
 		// Set speed
@@ -201,15 +204,16 @@ void Console::ExecuteCommand(const std::string& _command)
 
 		// Listen for all variables in their current state [TODO]
 		if (parsedcommand[1] == "all")
-			MainController.PollData();
+			MainController.Listen();
 
 		// Listen for any bytes (unparsed) [TODO]
 		if (parsedcommand[1] == "raw")
-			MainController.PollData();
+			MainController.ListenRaw();
 
 		// Listen for a specific variable in its current state [TODO]
-		if (parsedcommand[1] == "variable1")
-			MainController.GetSerialController().WriteByte(std::stoul(parsedcommand[2], nullptr, 0));
+		if (parsedcommand[1] == "var1")
+			MainController.Listen(Controller::COMMAND::VAR1);
+			//MainController.GetSerialController().WriteByte(std::stoul(parsedcommand[2], nullptr, 0));
 	}
 
 	// Poll command [DEPRECATED]
@@ -242,11 +246,6 @@ void Console::ExecuteCommand(const std::string& _command)
 			MainController.GetSerialController().ReadAllData();
 		}
 			
-		// Start polling data
-		if (parsedcommand[1] == "cont")
-		{
-			MainController.GetSerialController().ReadContinuousData();
-		}
 	}	
 
 	else

@@ -63,6 +63,7 @@ void Controller::ParseTelegram(const uint8_t * _telegram)
 	// Assemble Data:
 	uint16_t data = (_telegram[2] << 8) | _telegram[3];
 
+	MainConsole.Log("\nTelegram recieved:", Console::Info);
 	printf("Recieved [TYPE: 0x%X] with [COMMAND: 0x%X] and [DATA: 0x%X]\n", _telegram[0], _telegram[1], data);
 
 	// Select appropriate function
@@ -73,13 +74,13 @@ void Controller::ParseTelegram(const uint8_t * _telegram)
 
 		case COMMAND::DATA2:
 			break;
-
-		default:
-			return;
 	}
 
-	// Reset listener specifier
+	// Reset listener specifier & console
 	specifier == Controller::ALL;
+	
+	if (listening)
+		MainConsole.In();
 }
 
 bool Controller::Set(COMMAND _var, int _value, bool _verify)
@@ -105,7 +106,11 @@ bool Controller::Set(COMMAND _var, int _value, bool _verify)
 int Controller::Get(COMMAND _var, int _timeout)
 {
 
-	// !!! NEEDS LISTENER MANAGEMENT / ERRROR HANDLING! :(
+	if (listening)
+	{
+		MainConsole.Log("Cannot GET while listener is active.", Console::Error);
+		return 0;
+	}
 
 	// Send GET telegram
 	SendTelegram(Controller::GET, _var);
@@ -140,7 +145,7 @@ int Controller::Get(COMMAND _var, int _timeout)
 				uint16_t data = (buffer[2] << 8) | buffer[3];
 				return data;
 			}
-		}		
+		}
 
 	}
 
@@ -152,7 +157,14 @@ int Controller::Get(COMMAND _var, int _timeout)
 void Controller::Listen(COMMAND _var, int _refresh)
 {
 	specifier = _var;
-	serial_port.Listen();
+	this->listening = true;
+	serial_port.Listen(4, 50);
+}
+
+void Controller::ListenRaw()
+{
+	this->listening = true;
+	serial_port.Listen(1, 50);
 }
 	
 // ###################################################################################################
