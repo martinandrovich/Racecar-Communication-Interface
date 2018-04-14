@@ -28,33 +28,33 @@ private:
 	const char* COMport = COM_PORT;
 	bool connected = false;
 
-	std::thread* listener;
+	std::thread* listenerThread;
 
 	bool polling = false;
 	bool listening = false;
 	int  timeout = TIMEOUT;
-	int  refresh_rate = REFRESH_RATE;
-	int  data_length = DATA_LENGTH;
-	int* callback_func = nullptr;
+	int  refreshRate = REFRESH_RATE;
+	int  dataLength = DATA_LENGTH;
+	int* callbackFunction = nullptr;
 
 // Methods
 public:
 
-	void Connect();
-	void Disconnect();
-	void Flush();
+	void connect();
+	void disconnect();
+	void flush();
 
-	void WriteByte(uint8_t _byte);
-	char ReadByte();
-	void ReadBuffer(uint8_t& _buffer, int _length = DATA_LENGTH);
+	void writeByte(uint8_t byte);
+	char readByte();
+	void readBuffer(uint8_t& buffer, int length = DATA_LENGTH);
 
-	bool Poll(int _length = DATA_LENGTH);
-	void Listen(int _length = DATA_LENGTH, int _refresh = REFRESH_RATE);
+	bool poll(int length = DATA_LENGTH);
+	void listen(int length = DATA_LENGTH, int refresh = REFRESH_RATE);
 
-	void Listener();	
+	void listener();	
 
-	void ReadAllData();
-	void ReadContinuousData();
+	void readAllBytes();
+	void readContinuousData();
 
 	bool isConnected();
 	

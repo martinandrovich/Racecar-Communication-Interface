@@ -20,9 +20,9 @@ public:
 	Console();
 	~Console();
 
-
 // Logging Levels
 public:
+
 	enum LogLevel
 	{
 		Error,
@@ -33,21 +33,22 @@ public:
 
 // Methods
 public:
-	void SetLevel(LogLevel);
-	void SetForceNewLine(bool);
 
-	void Init();
-	void Log(const std::string& _msg, LogLevel = Normal, bool _newline = false);
-	void In();
-	void Input();
+	void setLevel(LogLevel logLevel);
+	void setForceNewLine(bool forceNewLine);
 
-	std::string OutputLastError();
+	void init();
+	void log(const std::string& msg, LogLevel = Normal, bool newline = false);
+	void in();
+	void input();
 
-	void ExecuteCommand(const std::string& _command);
+	std::string outputLastError();
+
+	void executeCommand(const std::string& _command);
 
 // Variables
 private:
-	LogLevel loglevel = Normal;
-	bool forcenewline = false;
+	LogLevel logLevel = Normal;
+	bool forceNewLine = false;
 };
 

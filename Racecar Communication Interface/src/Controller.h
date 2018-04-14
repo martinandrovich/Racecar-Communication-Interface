@@ -7,7 +7,7 @@
 #include "SerialPort.h"
 #include "Defaults.h"
 
-using Clock = std::chrono::high_resolution_clock;
+using chronoClock = std::chrono::high_resolution_clock;
 
 class Controller
 {
@@ -43,30 +43,30 @@ public:
 public:
 
 	// Communication
-	void Connect();
-	void Disconnect();
-	bool IsConnected();
+	void connect();
+	void disconnect();
+	bool isConnected();
 
-	SerialPort& GetSerialController();
+	SerialPort& getSerialController();
 
-	void SendTelegram(TYPE _type, COMMAND _command, uint8_t _data = 0);
-	void ParseTelegram(const uint8_t * _telegram);
+	void sendTelegram(TYPE type, COMMAND command, uint8_t data = 0);
+	void parseTelegram(const uint8_t * telegram);
 	
-	bool Set(COMMAND _var, int _value = 0, bool _verify = false);
-	int  Get(COMMAND _var, int _timeout = TIMEOUT);
-	void Listen(COMMAND _var = ALL, int _refresh = REFRESH_RATE);
-	void ListenRaw();
+	bool set(COMMAND var, int value = 0, bool verify = false);
+	int  get(COMMAND var, int timeout = TIMEOUT);
+	void listen(COMMAND var = ALL, int refresh = REFRESH_RATE);
+	void listenRaw();
 
 	// Device Control (Methods)
-	void SetSpeed(const int& _speed);
-	void GetSpeed();
+	void setSpeed(const int& speedPercentage);
+	void getSpeed();
 
-	void PollData(COMMAND _var = ALL);
+	void pollData(COMMAND var = ALL);
 
 // Variables & Data
 private:
 	
-	SerialPort serial_port;
+	SerialPort serialPort;
 
 	bool polling = false;
 	bool listening = false;

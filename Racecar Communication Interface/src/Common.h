@@ -6,5 +6,5 @@
 #include "Controller.h"
 
 // Declarations
-extern Console MainConsole;
-extern Controller MainController;
+extern Console		mainConsole;
+extern Controller	mainController;

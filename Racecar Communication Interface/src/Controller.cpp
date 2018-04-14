@@ -12,62 +12,62 @@ Controller::~Controller() {}
 // ###################################################################################################
 // Connectivity Methods
 
-void Controller::Connect()
+void Controller::connect()
 {
-	serial_port.Connect();
+	this->serialPort.connect();
 }
 
-void Controller::Disconnect()
+void Controller::disconnect()
 {
-	serial_port.Disconnect();
+	this->serialPort.disconnect();
 }
 
-bool Controller::IsConnected()
+bool Controller::isConnected()
 {
-	return serial_port.isConnected();
+	return this->serialPort.isConnected();
 }
 
-SerialPort& Controller::GetSerialController()
+SerialPort& Controller::getSerialController()
 {
-	return serial_port;
+	return this->serialPort;
 }
 
 // ###################################################################################################
 // Communication Protocol
 
-void Controller::SendTelegram(TYPE _type, COMMAND _command, uint8_t _data)
+void Controller::sendTelegram(TYPE type, COMMAND command, uint8_t data)
 {
-	MainConsole.Log("Sending telegram.", Console::Normal, false);
+	mainConsole.log("Sending telegram.", Console::Normal, false);
 
 	// !!! Show contents of sent telegram? i.e. Sending telegram: [0xAA | 0x11 | 0x00].
 
-	serial_port.WriteByte(_type);
-	serial_port.WriteByte(_command);
-	serial_port.WriteByte(_data);
+	this->serialPort.writeByte(type);
+	this->serialPort.writeByte(command);
+	this->serialPort.writeByte(data);
 }
 
-void Controller::ParseTelegram(const uint8_t * _telegram)
+void Controller::parseTelegram(const uint8_t * telegram)
 {
 	// Check TYPE to be REPLY
-	if (_telegram[0] != TYPE::REPLY)
+	if (telegram[0] != TYPE::REPLY)
 	{
-		MainConsole.Log("Recieved telegram is of incompatible TYPE.", Console::Error);
-		serial_port.Flush();
+		mainConsole.log("Recieved telegram is of incompatible TYPE.", Console::Error);
+		serialPort.flush();
 		return;
 	}
 
 	// If looking for specific COMMAND and not found, then return.
-	if (specifier != ALL && _telegram[1] != specifier)
+	if (this->specifier != ALL && telegram[1] != this->specifier)
 		return;
 
 	// Assemble Data:
-	uint16_t data = (_telegram[2] << 8) | _telegram[3];
+	uint16_t dataLong = (telegram[2] << 8) | telegram[3];
 
-	MainConsole.Log("\nTelegram recieved:", Console::Info);
-	printf("Recieved [TYPE: 0x%X] with [COMMAND: 0x%X] and [DATA: 0x%X]\n", _telegram[0], _telegram[1], data);
+	mainConsole.log("\nTelegram recieved:", Console::Info);
+	printf("Recieved [TYPE: 0x%X] with [COMMAND: 0x%X] and [DATA: 0x%X]\n", telegram[0], telegram[1], dataLong);
 
 	// Select appropriate function
-	switch (_telegram[1])
+	switch (telegram[1])
 	{
 		case COMMAND::DATA1:
 			break;
@@ -77,102 +77,105 @@ void Controller::ParseTelegram(const uint8_t * _telegram)
 	}
 
 	// Reset listener specifier & console
-	specifier == Controller::ALL;
+	this->specifier == Controller::ALL;
 	
-	if (listening)
-		MainConsole.In();
+	if (this->listening)
+		mainConsole.in();
 }
 
-bool Controller::Set(COMMAND _var, int _value, bool _verify)
+bool Controller::set(COMMAND var, int value, bool verify)
 {
 	// Send SET telegram
-	SendTelegram(Controller::SET, _var, _value);
+	this->sendTelegram(Controller::SET, var, value);
 
 	// Verify
-	if (_verify && _value != 0)
+	if (verify && value != 0)
 	{
 		Sleep(PAUSE);
 		std::cout << "Verifying data..." << std::endl;
 
-		if (_value == Get(_var))
+		if (value == get(var))
 			return true;
 		else
 			return false;
 	}
 	else
+	{
 		return true;
+	}
+		
 }
 
-int Controller::Get(COMMAND _var, int _timeout)
+int Controller::get(COMMAND var, int timeout)
 {
 
-	if (listening)
+	if (this->listening)
 	{
-		MainConsole.Log("Cannot GET while listener is active.", Console::Error);
+		mainConsole.log("Cannot GET while listener is active.", Console::Error);
 		return 0;
 	}
 
 	// Send GET telegram
-	SendTelegram(Controller::GET, _var);
+	this->sendTelegram(Controller::GET, var);
 
 	// Setup poll
-	polling = true;
-	uint8_t buffer[BUFFER_MAX_LENGTH];
+	this->polling = true;
 
-	auto time_started = Clock::now();
-	auto time_current = Clock::now();
-	auto time_delta   = std::chrono::duration_cast<std::chrono::milliseconds>(time_current - time_started).count();	
+	auto timeStarted = chronoClock::now();
+	auto timeCurrent = chronoClock::now();
+	auto timeDelta   = std::chrono::duration_cast<std::chrono::milliseconds>(timeCurrent - timeStarted).count();	
 
 	// Start polling
-	while (polling)
+	while (this->polling)
 	{
 		// Check timeout
-		time_current = Clock::now();
-		time_delta   = std::chrono::duration_cast<std::chrono::milliseconds>(time_current - time_started).count();
+		timeCurrent = chronoClock::now();
+		timeDelta   = std::chrono::duration_cast<std::chrono::milliseconds>(timeCurrent - timeStarted).count();
 
-		if (time_delta == _timeout)
-			polling = false;		
+		if (timeDelta == timeout)
+			this->polling = false;		
 
 		// Check buffer
-		if (serial_port.Poll())
+		if (this->serialPort.poll())
 		{
+			
+			uint8_t buffer[BUFFER_MAX_LENGTH];
+			this->serialPort.readBuffer(*buffer);
 
-			serial_port.ReadBuffer(*buffer);
-
-			if (buffer[0] == TYPE::REPLY && buffer[1] == _var)
+			if (buffer[0] == TYPE::REPLY && buffer[1] == var)
 			{
-				polling = false;
-				uint16_t data = (buffer[2] << 8) | buffer[3];
-				return data;
+				this->polling = false;
+				uint16_t dataLong = (buffer[2] << 8) | buffer[3];
+				return dataLong;
 			}
 		}
 
 	}
 
-	MainConsole.Log("Could not GET; Poll timed out.", Console::Error);
-	serial_port.Flush();
+	mainConsole.log("Could not GET; the function timed out.", Console::Error);
+	this->serialPort.flush();
 	return 0;
 }
 
-void Controller::Listen(COMMAND _var, int _refresh)
+void Controller::listen(COMMAND var, int refresh)
 {
-	specifier = _var;
+	this->specifier = var;
 	this->listening = true;
-	serial_port.Listen(4, 50);
+	this->serialPort.listen(4, 50);
 }
 
-void Controller::ListenRaw()
+void Controller::listenRaw()
 {
 	this->listening = true;
-	serial_port.Listen(1, 50);
+	this->serialPort.listen(1, 50);
 }
 	
 // ###################################################################################################
 // Device Control
 
-void Controller::PollData(COMMAND _var)
+void Controller::pollData(COMMAND var)
 {
-	MainConsole.Log("Starting data polling; press ESC to stop.\n", Console::Info);
+	mainConsole.log("Starting data polling; press ESC to stop.\n", Console::Info);
 
 	Sleep(2000);
 	
@@ -192,10 +195,11 @@ void Controller::PollData(COMMAND _var)
 		std::cout << "\r" << "Speed: " << a << " | Distance: " << b;;
 	}
 
+	this->polling = false;
 	std::cout << std::endl;
 }
 
-void Controller::SetSpeed(const int& _speed)
+void Controller::setSpeed(const int& speedPercentage)
 {
-	serial_port.WriteByte(_speed);
+	this->serialPort.writeByte(speedPercentage);
 }

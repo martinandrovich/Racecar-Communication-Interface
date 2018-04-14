@@ -5,21 +5,21 @@
 #include "src\Defaults.h"
 
 // Initialize Objects
-Console MainConsole;
-Controller MainController;
+Console		mainConsole;
+Controller	mainController;
 
 int main(void)
 {
 	// Init
-	MainConsole.Init();
+	mainConsole.init();
 
 	// Config Console
-	MainConsole.SetLevel(Console::Normal);
-	MainConsole.SetForceNewLine(true);
+	mainConsole.setLevel(Console::Normal);
+	mainConsole.setForceNewLine(true);
 
 	// Input Loop
 	while(true)
-		MainConsole.Input();
+		mainConsole.input();
 
 	// Exit
 	return 0;

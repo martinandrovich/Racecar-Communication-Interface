@@ -8,29 +8,29 @@ Console::Console()
 // ###################################################################################################
 // Logging
 
-void Console::Init()
+void Console::init()
 {
 	system("CLS");
 	printf("RCI Version %s \n", VERSION);
 }
 
-void Console::SetLevel(LogLevel _loglevel)
+void Console::setLevel(LogLevel logLevel)
 {
-	this->loglevel = _loglevel;
+	this->logLevel = logLevel;
 }
 
-void Console::SetForceNewLine(bool _forcenewline)
+void Console::setForceNewLine(bool forceNewLine)
 {
-	this->forcenewline = _forcenewline;
+	this->forceNewLine = forceNewLine;
 }
 
-void Console::Log(const std::string& _msg, LogLevel _loglevel, bool _newline)
+void Console::log(const std::string& msg, LogLevel logLevel, bool newLine)
 {
 
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);	
 	std::string prefix = "";
 
-	switch(_loglevel)
+	switch(logLevel)
 	{
 		case LogLevel::Error:
 			prefix = "[ERROR]: ";
@@ -50,33 +50,33 @@ void Console::Log(const std::string& _msg, LogLevel _loglevel, bool _newline)
 			break;
 	}	
 
-	if (_loglevel <= this->loglevel)
+	if (logLevel <= this->logLevel)
 	{		
-		if (_newline  || this->forcenewline)
-			std::cout << std::endl << prefix << _msg << std::endl;
+		if (newLine || this->forceNewLine)
+			std::cout << std::endl << prefix << msg << std::endl;
 		else
-			std::cout << prefix << _msg << std::endl;
+			std::cout << prefix << msg << std::endl;
 	}
 
 	SetConsoleTextAttribute(hConsole, (FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN));
 }
 
-void Console::In()
+void Console::in()
 {
 	std::cout << std::endl << ">> ";
 }
 
-void Console::Input()
+void Console::input()
 {
 	std::string command;
 
-	In();
+	in();
 	std::getline(std::cin, command);
 
-	ExecuteCommand(command);
+	executeCommand(command);
 }
 
-std::string Console::OutputLastError()
+std::string Console::outputLastError()
 {
 	//Get the error message, if any.
 	DWORD errorMessageID = ::GetLastError();
@@ -99,12 +99,12 @@ std::string Console::OutputLastError()
 // ###################################################################################################
 // Command Parser
 
-void Console::ExecuteCommand(const std::string& _command)
+void Console::executeCommand(const std::string& command)
 {
 	
 	// Split _command by spaces into (dynamic) array
-	std::istringstream iss(_command);
-	std::vector<std::string> parsedcommand(std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>());
+	std::istringstream iss(command);
+	std::vector<std::string> parsedCommand(std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>());
 
 	/*auto command_type = parsedcommand[0];
 	auto command_arg1 = parsedcommand[1];*/
@@ -112,144 +112,128 @@ void Console::ExecuteCommand(const std::string& _command)
 	// !!!
 	// Needs checking of command (input string) bounds
 
-	if (_command == "")
-		MainConsole.Log("NULL command.", Warning);
+	if (command == "")
+		this->log("NULL Command.", Warning);
 
-	else if (_command == "exit")
+	else if (command == "exit")
 	{
-		MainController.Disconnect();
-		while (MainController.IsConnected())
+		mainController.disconnect();
+		while (mainController.isConnected())
 			; // Wait
 		exit(0);
 	}
 
-	else if (_command == "cls")
-		Init();
+	else if (command == "cls")
+		init();
 
-	else if (_command == "connect")
-		MainController.Connect();
+	else if (command == "connect")
+		mainController.connect();
 
-	else if (!MainController.IsConnected())
-		MainConsole.Log("Cannot execute command without COM connection.", Warning);
+	else if (!mainController.isConnected())
+		this->log("Cannot execute command without COM connection.", Warning);
 
 	// Test commands for MIC board
-	else if (parsedcommand[0] == "test") {
+	else if (parsedCommand[0] == "test") {
 
 		// Test #1 (SET 0x00_01 -> LED_OFF)
-		if (parsedcommand[1] == "ledoff")
-			MainController.Set(Controller::DATA1);
-			//MainController.SendTelegram(Controller::SET, Controller::DATA1, 0);
+		if (parsedCommand[1] == "ledoff")
+			mainController.set(Controller::DATA1);
 
 		// Test #2 (SET 0x00_02 -> LED_ON)
-		if (parsedcommand[1] == "ledon")
-			MainController.Set(Controller::DATA2);
-			//MainController.SendTelegram(Controller::SET, Controller::DATA2);
+		if (parsedCommand[1] == "ledon")
+			mainController.set(Controller::DATA2);
 
 		// Test #3A (SET 0x00_03 -> SET_LED)
-		if (parsedcommand[1] == "setled")
-			MainController.Set(Controller::DATA3, std::stoul(parsedcommand[2], nullptr, 0));
-			//MainController.SendTelegram(Controller::SET, Controller::DATA3, std::stoul(parsedcommand[2], nullptr, 0));
+		if (parsedCommand[1] == "setled")
+			mainController.set(Controller::DATA3, std::stoul(parsedCommand[2], nullptr, 0));
 
 		// Test #3B (SET 0x00_03 -> SET_LED) w/ Verification
-		if (parsedcommand[1] == "setledver")
+		if (parsedCommand[1] == "setledver")
 		{
-			int  setval = std::stoul(parsedcommand[2], nullptr, 0);
-			bool result = MainController.Set(Controller::DATA3, setval, true);
+			int  setVal = std::stoul(parsedCommand[2], nullptr, 0);
+			bool result = mainController.set(Controller::DATA3, setVal, true);
 
 			if (result)
-				printf("\n[DATA: 0x%X] was sent!\n", setval);
+				printf("\n[DATA: 0x%X] was sent!\n", setVal);
 			else
 				printf("\nData verification failed.");
 		}			
 
 		// Test #4 (SET 0x00_12 -> DO_ECHO)
-		if (parsedcommand[1] == "echo")
-			MainController.SendTelegram(Controller::SET, Controller::VAR1);
+		if (parsedCommand[1] == "echo")
+			mainController.sendTelegram(Controller::SET, Controller::VAR1);
 
 		// Test #5 (GET 0x00_12 -> SEND_TEST_TELEGRAM)
-		if (parsedcommand[1] == "gettele")
-			printf("Recieved [DATA: 0x%X] \n", MainController.Get(Controller::VAR1));
+		if (parsedCommand[1] == "gettele")
+			printf("Recieved [DATA: 0x%X] \n", mainController.get(Controller::VAR1));
 
 		// Test #6 (GET 0x00_03 -> GET_LED)
-		if (parsedcommand[1] == "getled")
-			printf("Recieved [DATA: 0x%X] \n", MainController.Get(Controller::DATA3));
+		if (parsedCommand[1] == "getled")
+			printf("Recieved [DATA: 0x%X] \n", mainController.get(Controller::DATA3));
 	}
 
 	// Set command [UPDATE NEEDED]
-	else if (parsedcommand[0] == "set") {
+	else if (parsedCommand[0] == "set") {
 
 		// Set speed
-		if (parsedcommand[1] == "speed")
-			MainController.GetSerialController().WriteByte(std::stoul(parsedcommand[2], nullptr, 0));
+		if (parsedCommand[1] == "speed")
+			mainController.getSerialController().writeByte(std::stoul(parsedCommand[2], nullptr, 0));
 
 		// Set variable1
-		if (parsedcommand[1] == "variable1")
-			MainController.GetSerialController().WriteByte(std::stoul(parsedcommand[2], nullptr, 0));
+		if (parsedCommand[1] == "variable1")
+			mainController.getSerialController().writeByte(std::stoul(parsedCommand[2], nullptr, 0));
 	}
 
 	// Get command [TODO]
-	else if (parsedcommand[0] == "get") {
+	else if (parsedCommand[0] == "get") {
 
 		// Get all variables in their current state [TODO]
-		if (parsedcommand[1] == "all")
-			MainController.PollData();
+		if (parsedCommand[1] == "all")
+			mainController.pollData();
 
 		// Get specific variable in its current state [TODO]
-		if (parsedcommand[1] == "variable1")
-			MainController.GetSerialController().WriteByte(std::stoul(parsedcommand[2], nullptr, 0));
+		if (parsedCommand[1] == "variable1")
+			mainController.getSerialController().writeByte(std::stoul(parsedCommand[2], nullptr, 0));
 	}
 
-	// Listen command [TODO]
-	else if (parsedcommand[0] == "listen") {
+	// Listen command
+	else if (parsedCommand[0] == "listen") {
 
-		// Listen for all variables in their current state [TODO]
-		if (parsedcommand[1] == "all")
-			MainController.Listen();
+		// Listen for all variables in their current state
+		if (parsedCommand[1] == "all")
+			mainController.listen();
 
-		// Listen for any bytes (unparsed) [TODO]
-		if (parsedcommand[1] == "raw")
-			MainController.ListenRaw();
+		// Listen for any single bytes
+		if (parsedCommand[1] == "raw")
+			mainController.listenRaw();
 
-		// Listen for a specific variable in its current state [TODO]
-		if (parsedcommand[1] == "var1")
-			MainController.Listen(Controller::COMMAND::VAR1);
-			//MainController.GetSerialController().WriteByte(std::stoul(parsedcommand[2], nullptr, 0));
-	}
+		// Listen for a specific variable in its current state
+		if (parsedCommand[1] == "var1")
+			mainController.listen(Controller::COMMAND::VAR1);
 
-	// Poll command [DEPRECATED]
-	// Should be changed to >>> PULL <<<
-	else if (parsedcommand[0] == "poll") {
-
-		// Poll all variables in their current state
-		if (parsedcommand[1] == "all")
-			MainController.PollData();
-
-		// Poll specific variable in its current state [TODO]
-		if (parsedcommand[1] == "variable1")
-			MainController.GetSerialController().WriteByte(std::stoul(parsedcommand[2], nullptr, 0));
 	}
 
 	// Read command [DEPRECATED]
-	else if (parsedcommand[0] == "read") {
+	else if (parsedCommand[0] == "read") {
 
 		// Read latest byte
-		if (parsedcommand[1] == "last")
+		if (parsedCommand[1] == "last")
 		{
-			int read_data = MainController.GetSerialController().ReadByte();
+			int read_data = mainController.getSerialController().readByte();
 			if (read_data)
 				printf("0x%X (%c)\n", read_data, read_data);
 		}
 
 		// Read whole buffer
-		if (parsedcommand[1] == "buffer")
+		if (parsedCommand[1] == "buffer")
 		{
-			MainController.GetSerialController().ReadAllData();
+			mainController.getSerialController().readAllBytes();
 		}
 			
 	}	
 
 	else
-		MainConsole.Log("Unrecognized command.", Warning);
+		this->log("Unrecognized command.", Warning);
 
 }
 

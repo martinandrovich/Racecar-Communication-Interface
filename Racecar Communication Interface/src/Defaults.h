@@ -1,5 +1,19 @@
 #pragma once
 
+/*
+
+Naming Conventions:
+
+Constants					= SOME_CONSTANT
+Classes						= SomeClass
+Structures (i.e. Enum)		= SomeStructure
+Methods						= someMethod()
+Member Methods				= this->someMethod()
+Variables					= someVariable
+Member Variables			= this->someVariable
+
+*/
+
 #define VERSION				"1.0.4"
 
 #define COM_PORT			"\\\\.\\COM7"
