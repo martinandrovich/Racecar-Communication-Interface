@@ -59,6 +59,7 @@ public:
 
 	// Device Control (Methods)
 	void setSpeed(const int& speedPercentage);
+	void setDutyCycle(const int& dutyCycle);
 	void getSpeed();
 
 	void pollData(COMMAND var = ALL);

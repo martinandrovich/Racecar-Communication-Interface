@@ -20,3 +20,5 @@
 - Added:	Defaults headerfile
 - Fixed:	Refactored Naming Conventions (Defaults.h)
 - Added:	Communication Protocol (beta)
+- Added:	Duty Cycle Motor Control
+- Removed:	Communication Protocol Testing Code

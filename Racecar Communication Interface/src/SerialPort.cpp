@@ -16,8 +16,12 @@ SerialPort::SerialPort(const char* _COMport)
 SerialPort::~SerialPort()
 {
 	this->disconnect();
-	this->listenerThread->join();
-	delete this->listenerThread;
+
+	if (this->listenerThread != nullptr)
+	{
+		this->listenerThread->join();
+		delete this->listenerThread;
+	}	
 }
 
 // Create HANDLE and connect to specified COMport

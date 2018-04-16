@@ -132,52 +132,16 @@ void Console::executeCommand(const std::string& command)
 	else if (!mainController.isConnected())
 		this->log("Cannot execute command without COM connection.", Warning);
 
-	// Test commands for MIC board
-	else if (parsedCommand[0] == "test") {
-
-		// Test #1 (SET 0x00_01 -> LED_OFF)
-		if (parsedCommand[1] == "ledoff")
-			mainController.set(Controller::DATA1);
-
-		// Test #2 (SET 0x00_02 -> LED_ON)
-		if (parsedCommand[1] == "ledon")
-			mainController.set(Controller::DATA2);
-
-		// Test #3A (SET 0x00_03 -> SET_LED)
-		if (parsedCommand[1] == "setled")
-			mainController.set(Controller::DATA3, std::stoul(parsedCommand[2], nullptr, 0));
-
-		// Test #3B (SET 0x00_03 -> SET_LED) w/ Verification
-		if (parsedCommand[1] == "setledver")
-		{
-			int  setVal = std::stoul(parsedCommand[2], nullptr, 0);
-			bool result = mainController.set(Controller::DATA3, setVal, true);
-
-			if (result)
-				printf("\n[DATA: 0x%X] was sent!\n", setVal);
-			else
-				printf("\nData verification failed.");
-		}			
-
-		// Test #4 (SET 0x00_12 -> DO_ECHO)
-		if (parsedCommand[1] == "echo")
-			mainController.sendTelegram(Controller::SET, Controller::VAR1);
-
-		// Test #5 (GET 0x00_12 -> SEND_TEST_TELEGRAM)
-		if (parsedCommand[1] == "gettele")
-			printf("Recieved [DATA: 0x%X] \n", mainController.get(Controller::VAR1));
-
-		// Test #6 (GET 0x00_03 -> GET_LED)
-		if (parsedCommand[1] == "getled")
-			printf("Recieved [DATA: 0x%X] \n", mainController.get(Controller::DATA3));
-	}
-
 	// Set command [UPDATE NEEDED]
 	else if (parsedCommand[0] == "set") {
 
 		// Set speed
 		if (parsedCommand[1] == "speed")
-			mainController.getSerialController().writeByte(std::stoul(parsedCommand[2], nullptr, 0));
+			mainController.set(Controller::START, std::stoul(parsedCommand[2], nullptr, 0));
+
+			// Set speed
+		if (parsedCommand[1] == "dutycycle")
+			mainController.setDutyCycle(std::stoul(parsedCommand[2], nullptr, 0));
 
 		// Set variable1
 		if (parsedCommand[1] == "variable1")

@@ -16,7 +16,7 @@ Member Variables			= this->someVariable
 
 #define VERSION				"1.0.4"
 
-#define COM_PORT			"\\\\.\\COM7"
+#define COM_PORT			"\\\\.\\COM3"
 #define	TIMEOUT				2000
 #define BUFFER_LENGTH		1
 #define BUFFER_MAX_LENGTH	255

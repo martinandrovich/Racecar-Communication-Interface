@@ -203,3 +203,8 @@ void Controller::setSpeed(const int& speedPercentage)
 {
 	this->serialPort.writeByte(speedPercentage);
 }
+
+void Controller::setDutyCycle(const int& dutyCycle)
+{
+	this->set(Controller::START, dutyCycle);
+}
