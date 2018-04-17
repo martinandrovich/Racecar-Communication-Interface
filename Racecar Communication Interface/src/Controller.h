@@ -22,21 +22,30 @@ public:
 
 	enum TYPE
 	{
-		GET		= 0xAA,
-		SET		= 0x55,
-		REPLY	= 0xBB,
-		ERR		= 0XEE
+		GET			= 0xAA,
+		SET			= 0x55,
+		REPLY		= 0xBB,
+		ERR			= 0XEE
 	};
 
 	enum COMMAND
 	{
-		ALL		= 0x00,
-		START	= 0x10,
-		STOP	= 0x11,
-		DATA1	= 0x01,
-		DATA2	= 0x02,
-		DATA3	= 0x03,
-		VAR1	= 0x12
+		UNDEF		= 0x00,
+		START		= 0x10,
+		STOP		= 0x11,
+		AUTO		= 0x01,
+		MAPP		= 0x02,
+		BROD		= 0x03,
+		VAR1		= 0x12
+	};
+
+	enum BROADCAST
+	{
+		OFF			= 0x00,
+		ALL			= 0b001 << 3,
+		TACHO		= 0b011 << 3,
+		FNLNE		= 0b111 << 3,
+		ACCLR		= 0b101 << 3,
 	};
 
 // Methods
@@ -54,15 +63,16 @@ public:
 	
 	bool set(COMMAND var, int value = 0, bool verify = false);
 	int  get(COMMAND var, int timeout = TIMEOUT);
-	void listen(COMMAND var = ALL, int refresh = REFRESH_RATE);
+	void listen(COMMAND var = UNDEF, int refresh = REFRESH_RATE);
 	void listenRaw();
 
 	// Device Control (Methods)
 	void setSpeed(const int& speedPercentage);
 	void setDutyCycle(const int& dutyCycle);
+	void setBroadcast(BROADCAST mode);
 	void getSpeed();
 
-	void pollData(COMMAND var = ALL);
+	void pollData(COMMAND var = UNDEF);
 
 // Variables & Data
 private:
@@ -72,7 +82,7 @@ private:
 	bool polling = false;
 	bool listening = false;
 
-	COMMAND specifier = ALL;
+	COMMAND specifier = UNDEF;
 
 };
 

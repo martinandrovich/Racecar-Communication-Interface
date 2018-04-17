@@ -139,9 +139,25 @@ void Console::executeCommand(const std::string& command)
 		if (parsedCommand[1] == "speed")
 			mainController.set(Controller::START, std::stoul(parsedCommand[2], nullptr, 0));
 
-			// Set speed
+		// Set speed
 		if (parsedCommand[1] == "dutycycle")
 			mainController.setDutyCycle(std::stoul(parsedCommand[2], nullptr, 0));
+
+		// Set broadcast mode
+		if (parsedCommand[1] == "broadcast")
+		{
+			if (parsedCommand[2] == "all")
+				mainController.setBroadcast(Controller::ALL);
+
+			if (parsedCommand[2] == "tachometer")
+				mainController.setBroadcast(Controller::TACHO);
+
+			if (parsedCommand[2] == "finishline")
+				mainController.setBroadcast(Controller::FNLNE);
+
+			if (parsedCommand[2] == "accelerometer")
+				mainController.setBroadcast(Controller::ACCLR);
+		}
 
 		// Set variable1
 		if (parsedCommand[1] == "variable1")

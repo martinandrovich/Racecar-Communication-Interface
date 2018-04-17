@@ -57,7 +57,7 @@ void Controller::parseTelegram(const uint8_t * telegram)
 	}
 
 	// If looking for specific COMMAND and not found, then return.
-	if (this->specifier != ALL && telegram[1] != this->specifier)
+	if (this->specifier != UNDEF && telegram[1] != this->specifier)
 		return;
 
 	// Assemble Data:
@@ -69,15 +69,15 @@ void Controller::parseTelegram(const uint8_t * telegram)
 	// Select appropriate function
 	switch (telegram[1])
 	{
-		case COMMAND::DATA1:
+		case COMMAND::MAPP:
 			break;
 
-		case COMMAND::DATA2:
+		case COMMAND::AUTO:
 			break;
 	}
 
 	// Reset listener specifier & console
-	this->specifier == Controller::ALL;
+	this->specifier == Controller::UNDEF;
 	
 	if (this->listening)
 		mainConsole.in();
@@ -207,4 +207,9 @@ void Controller::setSpeed(const int& speedPercentage)
 void Controller::setDutyCycle(const int& dutyCycle)
 {
 	this->set(Controller::START, dutyCycle);
+}
+
+void Controller::setBroadcast(BROADCAST mode)
+{
+	this->set(Controller::BROD, mode);
 }

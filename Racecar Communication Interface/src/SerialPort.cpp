@@ -276,6 +276,14 @@ void SerialPort::listener()
 
 	while (this->listening)
 	{
+
+		if (GetAsyncKeyState(VK_ESCAPE))
+		{
+			mainConsole.log("Listener has been stopped.", Console::Info);
+			this->listening = false;
+			break;
+		}
+
 		if (this->poll(dataLength))
 		{
 
