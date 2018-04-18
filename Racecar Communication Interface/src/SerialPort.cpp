@@ -245,7 +245,7 @@ bool SerialPort::poll(int length)
 void SerialPort::listen(int length, int refresh)
 {
 	
-	mainConsole.log("Initializing listener, type \"listener stop\" to stop.", Console::Info);
+	mainConsole.log("Initializing listener, press ESC to stop.", Console::Info);
 	
 	// Pause listener if running
 	if (this->listening)
@@ -274,14 +274,18 @@ void SerialPort::listener()
 
 	std::cout << "Listener thread created.\n";
 
-	while (this->listening)
+	while (this->connected)
 	{
+
+		if (!this->listening)
+			continue;
 
 		if (GetAsyncKeyState(VK_ESCAPE))
 		{
-			mainConsole.log("Listener has been stopped.", Console::Info);
 			this->listening = false;
-			break;
+			mainConsole.log("Listener has been paused.", Console::Info);
+			mainConsole.in();
+			continue;
 		}
 
 		if (this->poll(dataLength))
@@ -297,7 +301,8 @@ void SerialPort::listener()
 			if (this->dataLength == 1)
 			{
 				printf("BYTE: 0x%X\n", buffer[0]);
-				std::cout << std::endl << ">> ";
+				mainConsole.in();
+				//std::cout << std::endl << ">> ";
 			}
 			else
 			{

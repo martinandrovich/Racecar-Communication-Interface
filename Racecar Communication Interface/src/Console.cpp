@@ -146,6 +146,9 @@ void Console::executeCommand(const std::string& command)
 		// Set broadcast mode
 		if (parsedCommand[1] == "broadcast")
 		{
+			if (parsedCommand[2] == "none")
+				mainController.setBroadcast(Controller::OFF);
+
 			if (parsedCommand[2] == "all")
 				mainController.setBroadcast(Controller::ALL);
 
@@ -208,6 +211,12 @@ void Console::executeCommand(const std::string& command)
 		if (parsedCommand[1] == "buffer")
 		{
 			mainController.getSerialController().readAllBytes();
+		}
+
+		// Flush the buffer
+		if (parsedCommand[1] == "flush")
+		{
+			mainController.getSerialController().flush();
 		}
 			
 	}	

@@ -33,10 +33,10 @@ public:
 		UNDEF		= 0x00,
 		START		= 0x10,
 		STOP		= 0x11,
-		AUTO		= 0x01,
-		MAPP		= 0x02,
-		BROD		= 0x03,
-		VAR1		= 0x12
+		AUTO		= 0x12,
+		MAPP		= 0x13,
+		BROD		= 0x14,
+		VAR1		= 0x15
 	};
 
 	enum BROADCAST
