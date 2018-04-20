@@ -129,6 +129,9 @@ void Console::executeCommand(const std::string& command)
 	else if (command == "connect")
 		mainController.connect();
 
+	else if (command == "test")
+		mainController.pollData(Controller::UNDEF);
+
 	else if (!mainController.isConnected())
 		this->log("Cannot execute command without COM connection.", Warning);
 
