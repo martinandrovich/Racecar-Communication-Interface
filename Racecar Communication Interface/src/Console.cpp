@@ -155,13 +155,13 @@ void Console::executeCommand(const std::string& command)
 			if (parsedCommand[2] == "all")
 				mainController.setBroadcast(Controller::ALL);
 
-			if (parsedCommand[2] == "tachometer")
+			if (parsedCommand[2] == "tacho")
 				mainController.setBroadcast(Controller::TACHO);
 
-			if (parsedCommand[2] == "finishline")
+			if (parsedCommand[2] == "fnlne")
 				mainController.setBroadcast(Controller::FNLNE);
 
-			if (parsedCommand[2] == "accelerometer")
+			if (parsedCommand[2] == "acclr")
 				mainController.setBroadcast(Controller::ACCLR);
 		}
 
