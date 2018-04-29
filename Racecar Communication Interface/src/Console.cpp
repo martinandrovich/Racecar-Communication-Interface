@@ -139,10 +139,6 @@ void Console::executeCommand(const std::string& command)
 	else if (parsedCommand[0] == "set") {
 
 		// Set speed
-		if (parsedCommand[1] == "speed")
-			mainController.set(Controller::START, std::stoul(parsedCommand[2], nullptr, 0));
-
-		// Set speed
 		if (parsedCommand[1] == "dutycycle")
 			mainController.setDutyCycle(std::stoul(parsedCommand[2], nullptr, 0));
 
@@ -165,6 +161,10 @@ void Console::executeCommand(const std::string& command)
 				mainController.setBroadcast(Controller::ACCLR);
 		}
 
+		// Enable mapping
+		if (parsedCommand[1] == "mapping")
+			mainController.enableMapping();
+
 		// Set variable1
 		if (parsedCommand[1] == "variable1")
 			mainController.getSerialController().writeByte(std::stoul(parsedCommand[2], nullptr, 0));
@@ -180,6 +180,10 @@ void Console::executeCommand(const std::string& command)
 		// Get specific variable in its current state [TODO]
 		if (parsedCommand[1] == "variable1")
 			mainController.getSerialController().writeByte(std::stoul(parsedCommand[2], nullptr, 0));
+
+		// Get mapping data stream
+		if (parsedCommand[1] == "mapping")
+			mainController.getMapping();
 	}
 
 	// Listen command

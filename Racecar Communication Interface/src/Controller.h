@@ -70,7 +70,8 @@ public:
 	void setSpeed(const int& speedPercentage);
 	void setDutyCycle(const int& dutyCycle);
 	void setBroadcast(BROADCAST mode);
-	void getSpeed();
+	void enableMapping();
+	void getMapping();
 
 	void pollData(COMMAND var = UNDEF);
 

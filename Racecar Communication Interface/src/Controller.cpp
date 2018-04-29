@@ -38,6 +38,7 @@ SerialPort& Controller::getSerialController()
 void Controller::sendTelegram(TYPE type, COMMAND command, uint8_t data)
 {
 	mainConsole.log("Sending telegram.", Console::Normal, false);
+	printf("[TYPE: 0x%X] | [COMMAND: 0x%X] | [DATA: 0x%X]\n", type, command, data);
 
 	// !!! Show contents of sent telegram? i.e. Sending telegram: [0xAA | 0x11 | 0x00].
 
@@ -212,4 +213,14 @@ void Controller::setDutyCycle(const int& dutyCycle)
 void Controller::setBroadcast(BROADCAST mode)
 {
 	this->set(Controller::BROD, mode);
+}
+
+void Controller::enableMapping()
+{
+	this->set(Controller::MAPP);
+}
+
+void Controller::getMapping()
+{
+	this->sendTelegram(Controller::GET, Controller::MAPP, 0);
 }
