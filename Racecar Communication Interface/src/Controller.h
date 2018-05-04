@@ -25,7 +25,7 @@ public:
 		GET			= 0xAA,
 		SET			= 0x55,
 		REPLY		= 0xBB,
-		ERR			= 0XEE
+		ERR			= 0XEE,
 	};
 
 	enum COMMAND
@@ -36,7 +36,7 @@ public:
 		AUTO		= 0x12,
 		MAPP		= 0x13,
 		BROD		= 0x14,
-		VAR1		= 0x15
+		TRAJ		= 0x16,
 	};
 
 	enum BROADCAST
@@ -71,7 +71,9 @@ public:
 	void setDutyCycle(const int& dutyCycle);
 	void setBroadcast(BROADCAST mode);
 	void enableMapping();
+	void enableTrajectory();
 	void getMapping();
+	void getTrajectory();
 
 	void pollData(COMMAND var = UNDEF);
 

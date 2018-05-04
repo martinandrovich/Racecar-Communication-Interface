@@ -220,7 +220,17 @@ void Controller::enableMapping()
 	this->set(Controller::MAPP);
 }
 
+void Controller::enableTrajectory()
+{
+	this->set(Controller::TRAJ);
+}
+
 void Controller::getMapping()
 {
 	this->sendTelegram(Controller::GET, Controller::MAPP, 0);
+}
+
+void Controller::getTrajectory()
+{
+	this->sendTelegram(Controller::GET, Controller::TRAJ, 0);
 }

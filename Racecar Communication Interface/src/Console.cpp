@@ -165,6 +165,10 @@ void Console::executeCommand(const std::string& command)
 		if (parsedCommand[1] == "mapping")
 			mainController.enableMapping();
 
+		// Enable trajectory
+		if (parsedCommand[1] == "trajectory")
+			mainController.enableTrajectory();
+
 		// Set variable1
 		if (parsedCommand[1] == "variable1")
 			mainController.getSerialController().writeByte(std::stoul(parsedCommand[2], nullptr, 0));
@@ -184,6 +188,11 @@ void Console::executeCommand(const std::string& command)
 		// Get mapping data stream
 		if (parsedCommand[1] == "mapping")
 			mainController.getMapping();
+
+		// Get trajectory data stream
+		if (parsedCommand[1] == "trajectory")
+			mainController.getTrajectory();
+
 	}
 
 	// Listen command
@@ -199,7 +208,7 @@ void Console::executeCommand(const std::string& command)
 
 		// Listen for a specific variable in its current state
 		if (parsedCommand[1] == "var1")
-			mainController.listen(Controller::COMMAND::VAR1);
+			mainController.listen(Controller::COMMAND::UNDEF);
 
 	}
 
