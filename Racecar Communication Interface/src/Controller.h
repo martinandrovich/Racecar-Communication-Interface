@@ -70,6 +70,7 @@ public:
 	void setSpeed(const int& speedPercentage);
 	void setDutyCycle(const int& dutyCycle);
 	void setBroadcast(BROADCAST mode);
+	void enableAutonomous();
 	void enableMapping();
 	void enableTrajectory();
 	void getMapping();

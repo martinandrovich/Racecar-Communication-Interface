@@ -215,6 +215,11 @@ void Controller::setBroadcast(BROADCAST mode)
 	this->set(Controller::BROD, mode);
 }
 
+void Controller::enableAutonomous()
+{
+	this->set(Controller::AUTO);
+}
+
 void Controller::enableMapping()
 {
 	this->set(Controller::MAPP);

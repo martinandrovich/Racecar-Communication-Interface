@@ -161,6 +161,10 @@ void Console::executeCommand(const std::string& command)
 				mainController.setBroadcast(Controller::ACCLR);
 		}
 
+		// Enable autonomous
+		if (parsedCommand[1] == "auto")
+			mainController.enableAutonomous();
+		
 		// Enable mapping
 		if (parsedCommand[1] == "mapping")
 			mainController.enableMapping();
