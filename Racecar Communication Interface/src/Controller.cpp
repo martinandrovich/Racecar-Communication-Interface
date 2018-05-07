@@ -230,6 +230,11 @@ void Controller::enableTrajectory()
 	this->set(Controller::TRAJ);
 }
 
+void Controller::enableTest()
+{
+	this->set(Controller::TEST);
+}
+
 void Controller::getMapping()
 {
 	this->sendTelegram(Controller::GET, Controller::MAPP, 0);

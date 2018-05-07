@@ -173,6 +173,10 @@ void Console::executeCommand(const std::string& command)
 		if (parsedCommand[1] == "trajectory")
 			mainController.enableTrajectory();
 
+		// Enable test mode
+		if (parsedCommand[1] == "test")
+			mainController.enableTest();
+
 		// Set variable1
 		if (parsedCommand[1] == "variable1")
 			mainController.getSerialController().writeByte(std::stoul(parsedCommand[2], nullptr, 0));

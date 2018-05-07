@@ -37,6 +37,7 @@ public:
 		MAPP		= 0x13,
 		BROD		= 0x14,
 		TRAJ		= 0x16,
+		TEST		= 0x17,
 	};
 
 	enum BROADCAST
@@ -73,6 +74,7 @@ public:
 	void enableAutonomous();
 	void enableMapping();
 	void enableTrajectory();
+	void enableTest();
 	void getMapping();
 	void getTrajectory();
 
