@@ -38,15 +38,16 @@ public:
 		BROD		= 0x14,
 		TRAJ		= 0x16,
 		TEST		= 0x17,
+		TACHOM		= 0x18,
 	};
 
 	enum BROADCAST
 	{
-		OFF			= 0x00,
-		ALL			= 0b001 << 3,
-		TACHO		= 0b011 << 3,
-		FNLNE		= 0b111 << 3,
-		ACCLR		= 0b101 << 3,
+		OFF			= 0x00,		  // 000	
+		ALL			= 0b001 << 3, // 001
+		TACHO		= 0b011 << 3, // 011
+		VELOC		= 0b111 << 3, // 111
+		ACCLR		= 0b101 << 3, // 101
 	};
 
 // Methods
@@ -74,7 +75,7 @@ public:
 	void enableAutonomous();
 	void enableMapping();
 	void enableTrajectory();
-	void enableTest();
+	void enableBreaktest(int distance);
 	void getMapping();
 	void getTrajectory();
 

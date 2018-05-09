@@ -154,8 +154,8 @@ void Console::executeCommand(const std::string& command)
 			if (parsedCommand[2] == "tacho")
 				mainController.setBroadcast(Controller::TACHO);
 
-			if (parsedCommand[2] == "fnlne")
-				mainController.setBroadcast(Controller::FNLNE);
+			if (parsedCommand[2] == "veloc")
+				mainController.setBroadcast(Controller::VELOC);
 
 			if (parsedCommand[2] == "acclr")
 				mainController.setBroadcast(Controller::ACCLR);
@@ -174,8 +174,8 @@ void Console::executeCommand(const std::string& command)
 			mainController.enableTrajectory();
 
 		// Enable test mode
-		if (parsedCommand[1] == "test")
-			mainController.enableTest();
+		if (parsedCommand[1] == "breaktest")
+			mainController.enableBreaktest(std::stoul(parsedCommand[2], nullptr, 0));
 
 		// Set variable1
 		if (parsedCommand[1] == "variable1")
@@ -190,8 +190,8 @@ void Console::executeCommand(const std::string& command)
 			mainController.pollData();
 
 		// Get specific variable in its current state [TODO]
-		if (parsedCommand[1] == "variable1")
-			mainController.getSerialController().writeByte(std::stoul(parsedCommand[2], nullptr, 0));
+		if (parsedCommand[1] == "tacho")
+			mainController.sendTelegram(Controller::GET, Controller::TACHOM);
 
 		// Get mapping data stream
 		if (parsedCommand[1] == "mapping")

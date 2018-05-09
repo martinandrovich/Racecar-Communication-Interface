@@ -230,9 +230,9 @@ void Controller::enableTrajectory()
 	this->set(Controller::TRAJ);
 }
 
-void Controller::enableTest()
+void Controller::enableBreaktest(int distance)
 {
-	this->set(Controller::TEST);
+	this->set(Controller::TEST, distance);
 }
 
 void Controller::getMapping()

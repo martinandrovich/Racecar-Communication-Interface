@@ -17,6 +17,9 @@ int main(void)
 	mainConsole.setLevel(Console::Normal);
 	mainConsole.setForceNewLine(true);
 
+	mainController.connect();
+	mainController.listenRaw();
+
 	// Input Loop
 	while(true)
 		mainConsole.input();
